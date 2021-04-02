@@ -19,13 +19,14 @@ class MGlBufferTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
     private val entriesPerPixel = 4
     private val bytesPerEntry = 1
 
-    var IndiceTexturaGL = GL32.GL_TEXTURE1
+    var IndiceTexturaGL = GL32.GL_TEXTURE3
 
     var drawer:(Float, Float)-> TipoCor = dummyTexture()
 
     var dataArray: ByteArray? = null
 
-    private var handle = IntArray(1){0}
+    private var textureHandle = IntArray(1){0}
+    private var bufferHandle = IntArray(1){0}
 
     constructor(largura:Int,altura:Int, Drawer:(Float,Float)-> TipoCor) : this(largura,altura) {
         drawer = Drawer
@@ -37,30 +38,44 @@ class MGlBufferTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
     }
 
     override fun bind(){
-//          GL32.glBindBuffer(GL32.GL_TEXTURE_BUFFER, bufferHandle[0]);
         GL32.glActiveTexture(IndiceTexturaGL)
-        GL32.glTexBuffer(GL32.GL_TEXTURE_BUFFER,GL32.GL_R32UI,handle[0])
+        GL32.glBindTexture(
+                GL32.GL_TEXTURE_BUFFER,
+                textureHandle[0]
+        )
     }
 
     override fun liberarRecursos() {
-        GL32.glDeleteBuffers(handle)
+        GL32.glDeleteBuffers(bufferHandle)
+        GL32.glDeleteTextures(textureHandle)
     }
 
-    fun createTextureFromBuffer(dataBuffer:IntArray):Int {
-        GL32.glGenBuffers(handle)
-        if (handle[0] != 0) {
+    fun createTextureFromBuffer(dataBuffer:IntArray) {
+        GL32.glGenBuffers(bufferHandle)
+        if (bufferHandle[0] != 0) {
             GL32.glActiveTexture(IndiceTexturaGL)
             GL32.glBindBuffer(
                     GL32.GL_TEXTURE_BUFFER,
-                    handle[0]
+                    bufferHandle[0]
             )
             GL32.glBufferData(
                     GL32.GL_TEXTURE_BUFFER,
                     dataBuffer,
                     GL32.GL_STATIC_DRAW
             )
-        }else{ throw RuntimeException("Error loading Buffer Opengl.")}
-        return handle[0]
+        }else{ throw RuntimeException("Error generating Buffer Opengl.")}
+
+        GL32.glGenTextures(textureHandle)
+        if (textureHandle[0] != 0) {
+            GL32.glActiveTexture(IndiceTexturaGL)
+            GL32.glBindTexture(
+                    GL32.GL_TEXTURE_BUFFER,
+                    textureHandle[0]
+            )
+        }else{ throw RuntimeException("Error generating Texture Opengl.")}
+
+        GL32.glTexBuffer(GL32.GL_TEXTURE_BUFFER,GL32.GL_R32UI,bufferHandle[0])
+
     }
 
     override fun createOGLTexture() {
@@ -70,7 +85,7 @@ class MGlBufferTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
     }
 
     override fun getHandle():Int{
-        return handle[0]
+        return textureHandle[0]
     }
 
     fun populateByteArrayUsingDrawerFunction(){
@@ -90,7 +105,7 @@ class MGlBufferTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
 
 
     override fun toString():String{
-        return "Textura possui Handle GL :" + getHandle().toString()
+        return "Textura possui Handle GL: " + textureHandle[0].toString() + " Buffer Handle: " + bufferHandle[0].toString()
     }
 
     override fun marcarComoInvalida() {

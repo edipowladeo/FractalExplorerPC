@@ -123,16 +123,11 @@ class HelloWordWindow : DesenhistaDeCelulas() {
         mTextureBufferuniformhandle =  OGL.glGetUniformLocation(mProgramHandle, "u_TextureBuffer")
 
 
-
         // Tell OpenGL to use this program when rendering.
         OGL.glUseProgram(myGlProgram.getProgramHandle());
-        //redundante???
-        // Tell the texture uniform sampler to use this texture in the shader by binding to texture unit 0.
-        OGL.glActiveTexture(OGL.GL_TEXTURE1);
-        OGL.glUniform1i(mTextureUniformHandle, 0);
 
-          OGL.glActiveTexture(OGL.GL_TEXTURE0);
-        OGL.glUniform1i(mTextureBufferuniformhandle, 0);
+        OGL.glUniform1i(mTextureBufferuniformhandle, 3);
+        OGL.glUniform1i(mTextureUniformHandle, 0);
 
         val threadProcessamento = List<ThreadProcessamento>(12){ ThreadProcessamento(janela) }
         threadProcessamento.forEach{it.start()}
