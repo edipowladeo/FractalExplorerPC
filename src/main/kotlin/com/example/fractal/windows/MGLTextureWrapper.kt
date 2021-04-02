@@ -24,13 +24,6 @@ class MGlTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
     override fun lersejadestriu():Boolean{
         return         jadestruiu }
 
-    override fun fillTextureFromBuffer(buffer: ByteBuffer) {
-        TODO("Not yet implemented")
-    }
-
-    override fun desalocarTexturasGL() {
-        TODO("Not yet implemented")
-    }
 
     var iteracoes: ArrayIteracoes? = null
     private val entriesPerPixel = 4
@@ -58,7 +51,7 @@ class MGlTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
         setDoubleArray( Iteracoes)
     }
 
-    override fun invalidar() {
+    override fun marcarComoInvalida() {
         possuiTexturaValida = false
     }
 
@@ -102,7 +95,8 @@ class MGlTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
         return textureHandle[0]
     }
 
-    override fun createTextureFromBuffer(){
+    override fun createOGLTexture(){
+        populateBufferFromDoubleArray()
         dataArray?.let{
             var dataBuffer = ByteBuffer.allocateDirect(it.size * bytesPerEntry*entriesPerPixel)
                     .order(ByteOrder.nativeOrder())
@@ -112,7 +106,8 @@ class MGlTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
         dataArray = null
     }
 
-    override fun populateBufferFromDoubleArray(){
+    @ExperimentalUnsignedTypes
+    fun populateBufferFromDoubleArray(){
         iteracoes?.let{
             populateBufferFromDoubleArray(it)
         }
@@ -165,7 +160,7 @@ class MGlTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
             }}
     }
 
-    override fun getTextureHandle():Int{
+    override fun getHandle():Int{
         return textureHandle[0]
     }
 
@@ -175,7 +170,7 @@ class MGlTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
     }
 
     override fun toString():String{
-        return "Textura possui Handle GL :" + getTextureHandle().toString()
+        return "Textura possui Handle GL :" + getHandle().toString()
     }
 
 

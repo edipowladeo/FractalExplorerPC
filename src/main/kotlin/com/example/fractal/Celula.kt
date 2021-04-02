@@ -52,7 +52,7 @@ class Celula(val camada: Camada, val coordenadasPlano: CoordenadasPlano, val tam
     fun trocarTextura(novaTextura: TextureWrapper){
         texturaLock.lock()
         textura = novaTextura
-        textura.invalidar()
+        textura.marcarComoInvalida()
         texturaLock.unlock()
         solicitarGeracaoDeTexturaGL()
     }

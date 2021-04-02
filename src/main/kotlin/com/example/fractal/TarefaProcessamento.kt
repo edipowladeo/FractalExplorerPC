@@ -17,7 +17,7 @@ class TarefaCriarTexturaGL(val textura: TextureWrapper) : Runnable
    override fun run(){
        if (!textura.lersejadestriu()){
 //    if(true){
-        textura.createTextureFromBuffer()
+        textura.createOGLTexture()
         ////Log.i("TarefaCriarTexturaGL ","executou tarefa criar textura Gl " + textura.getHandle())
         textura.validar()
     }

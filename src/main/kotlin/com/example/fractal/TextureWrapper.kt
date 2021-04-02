@@ -5,22 +5,13 @@ import java.nio.ByteBuffer
 interface TextureWrapper {
 
     fun bind()
-//    fun setDoubleArray( Iteracoes:ArrayIteracoes)
-    fun populateBufferFromDoubleArray()
- //   fun populateBufferFromDoubleArray(iteracoes: ArrayIteracoes)
-    fun createTextureFromBuffer()
-    fun getTextureHandle():Int
+    fun createOGLTexture()
+    fun getHandle():Int
     fun liberarRecursos()
     fun validar()
-    fun invalidar()
+    fun marcarComoInvalida()
     fun estaValida():Boolean
     fun marcarComoJaDestruiu() // experimental
-   fun   lersejadestriu():Boolean
-
-
-
-    fun fillTextureFromBuffer(buffer: ByteBuffer)
-    fun desalocarTexturasGL()
-
+    fun lersejadestriu():Boolean
 
 }
