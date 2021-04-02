@@ -87,8 +87,6 @@ class MGlBufferTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
                     val pixelIndex = i + j*largura
                     val indiceByte = pixelIndex * entriesPerPixel
                     it[indiceByte] = 0
-
-
                 }
             }}
     }
