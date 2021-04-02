@@ -116,9 +116,9 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
     fun desenharCelulas(desenhista: DesenhistaDeCelulas){
         lock.lock()
      //   atualizaCameraECamadas()
-        val time = relogio.getCurrentTimeMs() % 10000L
-        val angleInRad = 6.28318530f / 10000.0f * time.toFloat() * velocidadeCircularCores
-        desenhista.AtualizaUniforms( angleInRad,escalaPaleta)
+        val time = relogio.getCurrentTimeMs() % 10240L
+       // val angleInRad = 6.28318530f / 10000.0f * time.toFloat() * velocidadeCircularCores
+        desenhista.AtualizaUniforms( time.toFloat(),escalaPaleta)
         paleta.bind()
         camadas.values.forEach { camada ->
             camada.posicionaTodasCelulasNaTela()

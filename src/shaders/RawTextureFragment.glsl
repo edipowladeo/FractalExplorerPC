@@ -21,17 +21,16 @@ in vec4 v_Color;
 out vec4 fragColor;
 
 vec4 paleta(uint iteracoes,float deltaT){
-    vec4 cor;
-    cor.a = 1.0;
-    if (iteracoes == 0u) return cor;
-    float iteracoesFloat = float(iteracoes);
-    iteracoesFloat/=u_escalaPaleta;
-   // iteracoesFloat+=deltaT;
+    int tamPaleta = 1024; // hardcoded
+    float velocidadeCircular = 0.1; //hardcoded
 
-    cor.r = 0.5+0.5*sin(iteracoesFloat);
-    cor.g = 0.5+0.5*sin(iteracoesFloat+2.0);
-    cor.b = 0.5+0.5*sin(iteracoesFloat-2.0);
 
+
+    if (iteracoes == 0u) return vec4(0.0,0.0,0.0,1.0); //Cor do set de mandelbrot
+
+    int pidex = int(iteracoes)%tamPaleta;
+    pidex = int(float(pidex) + deltaT*velocidadeCircular)%tamPaleta;
+    vec4 cor = texelFetch(u_Paleta,pidex);
     return cor;
 }
 
@@ -44,7 +43,8 @@ void main()
     int pidex = y*int(multiplicador)+x;
 
     vec4 corIteracoes = paleta(texelFetch(u_Iteracoes,pidex).r,u_tempo);
-    vec4 corPaleta = texelFetch(u_Paleta,pidex);
 
-    fragColor = corIteracoes*0.5+corPaleta*0.5;
+//    corIteracoes = texelFetch(u_Paleta,pidex); //debug
+
+    fragColor = corIteracoes;
 }
