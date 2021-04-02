@@ -11,7 +11,6 @@ class Celula(val camada: Camada, val coordenadasPlano: CoordenadasPlano, val tam
 //    private var textura= camada.janela.poolTextureWrapper.borrowObject()
      private var textura = camada.janela.texturaPlaceholder
 
-
     val texturaLock = ReentrantLock()
 
     //TODO: Decidir se vai usar sprite como membro ou como herança, ou se sequer deve existir a classe sprite

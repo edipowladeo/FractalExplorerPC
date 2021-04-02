@@ -27,10 +27,6 @@ class MGlBufferTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
 
     private var handle = IntArray(1){0}
 
-    init {
-
-    }
-
     constructor(largura:Int,altura:Int, Drawer:(Float,Float)-> TipoCor) : this(largura,altura) {
         drawer = Drawer
         populateByteArrayUsingDrawerFunction()
@@ -88,7 +84,8 @@ class MGlBufferTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
                     val indiceByte = pixelIndex * entriesPerPixel
                     it[indiceByte] = 0
                 }
-            }}
+            }
+        }
     }
 
 
