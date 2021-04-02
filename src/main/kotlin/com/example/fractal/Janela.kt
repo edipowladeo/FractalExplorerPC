@@ -1,5 +1,6 @@
 package com.example.fractal
 
+import com.example.fractal.windows.MGLRGBA8TextureWrapper
 import com.example.fractal.windows.ThreadManipularJanelas
 import java.lang.Math.pow
 import java.util.*
@@ -17,6 +18,8 @@ import kotlin.math.pow
  * somente caso esteja muito lento (profiling) seria a ultima coisa a fazer
   */
 class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : JanelaPropriedades() {
+
+    private lateinit var paleta: Paleta
 
     val relogio = gerenciadorDeImplementacoes.relogio()
 
@@ -55,6 +58,7 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
     var camadas: SortedMap<Int, Camada> = emptyMap<Int, Camada>().toSortedMap()
 
     init {
+        paleta = Paleta(this)
         TarefasAlocarTextura.add(TarefaCriarTexturaGL(texturaPlaceholder))
         atualizaCameraECamadas()
         val ThreadManipularJanelas = ThreadManipularJanelas(this)
@@ -115,6 +119,7 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
         val time = relogio.getCurrentTimeMs() % 10000L
         val angleInRad = 6.28318530f / 10000.0f * time.toFloat() * velocidadeCircularCores
         desenhista.AtualizaUniforms( angleInRad,escalaPaleta)
+        paleta.bind()
         camadas.values.forEach { camada ->
             camada.posicionaTodasCelulasNaTela()
         }

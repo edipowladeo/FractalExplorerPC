@@ -9,8 +9,8 @@
 precision highp float;
 //precision highp samplerBuffer;
 
-uniform highp usamplerBuffer u_TextureBuffer;    // The input texture buffer.
-uniform sampler2D u_Texture;    // The input texture.
+uniform highp usamplerBuffer u_Iteracoes;    // The input texture buffer.
+uniform mediump samplerBuffer u_Paleta;    // The input texture buffer.
 
 uniform float u_tempo;
 uniform float u_escalaPaleta;
@@ -43,9 +43,8 @@ void main()
     int y = int(v_TexturePosition.y*multiplicador);
     int pidex = y*int(multiplicador)+x;
 
-    uvec4 tex = texelFetch(u_TextureBuffer,pidex);
-    uint valor_inteiro = tex.r;
-    vec4 outputcolor = paleta(valor_inteiro,u_tempo);
+    vec4 corIteracoes = paleta(texelFetch(u_Iteracoes,pidex).r,u_tempo);
+    vec4 corPaleta = texelFetch(u_Paleta,pidex);
 
-    fragColor = outputcolor;
+    fragColor = corIteracoes*0.5+corPaleta*0.5;
 }

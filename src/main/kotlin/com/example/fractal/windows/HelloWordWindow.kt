@@ -2,7 +2,6 @@ package com.example.fractal.windows
 
 import com.example.fractal.CoordenadasTela
 import com.example.fractal.Janela
-import com.example.fractal.Relogio
 import com.example.fractal.android.ThreadProcessamento
 import org.lwjgl.Version
 import org.lwjgl.glfw.Callbacks
@@ -29,9 +28,9 @@ class HelloWordWindow : DesenhistaDeCelulas() {
 
     private lateinit var myGlProgram: MyGLProgramPC
     var mProgramHandle = 0
-    var mTextureUniformHandle = 0
     var mWindowSizeUniformHandle = 0
-    var mTextureBufferuniformhandle = 0
+    var mIteracoesTexBufferUniformHandle = 0
+    var mPaletaTexBufferUniformHandle = 0
 
     fun run() {
         println("Hello LWJGL " + Version.getVersion() + "!")
@@ -115,19 +114,19 @@ class HelloWordWindow : DesenhistaDeCelulas() {
 
         mProgramHandle = myGlProgram.getProgramHandle()
         handlePosicaoVertices = OGL.glGetAttribLocation(mProgramHandle, "a_RectangleVertices");
-        mTextureUniformHandle = OGL.glGetUniformLocation(mProgramHandle, "u_Texture");
         mWindowSizeUniformHandle = OGL.glGetUniformLocation(mProgramHandle, "u_WindowSize");
         handlePosicaoCelulas = OGL.glGetUniformLocation(mProgramHandle, "u_SpritePosition")
         handleEscalaDaPaleta = OGL.glGetUniformLocation(mProgramHandle, "u_escalaPaleta")
         handleTempo = OGL.glGetUniformLocation(mProgramHandle, "u_tempo")
-        mTextureBufferuniformhandle =  OGL.glGetUniformLocation(mProgramHandle, "u_TextureBuffer")
+        mIteracoesTexBufferUniformHandle =  OGL.glGetUniformLocation(mProgramHandle, "u_Iteracoes")
+        mPaletaTexBufferUniformHandle =  OGL.glGetUniformLocation(mProgramHandle, "u_Paleta")
 
 
         // Tell OpenGL to use this program when rendering.
         OGL.glUseProgram(myGlProgram.getProgramHandle());
 
-        OGL.glUniform1i(mTextureBufferuniformhandle, 3);
-        OGL.glUniform1i(mTextureUniformHandle, 0);
+        OGL.glUniform1i(mIteracoesTexBufferUniformHandle, 3);
+        OGL.glUniform1i(mPaletaTexBufferUniformHandle, 4);
 
         val threadProcessamento = List<ThreadProcessamento>(12){ ThreadProcessamento(janela) }
         threadProcessamento.forEach{it.start()}

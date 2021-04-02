@@ -7,9 +7,11 @@ import com.example.fractal.TextureWrapper
 import com.example.fractal.TipoCor
 import com.example.fractal.dummyTexture
 import java.nio.ByteBuffer
+import java.nio.ByteOrder
+import java.util.*
 
 /**x e y da funcao drawer deve ir de -0.5 até 0.5*/
-class MGlBufferTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
+class MGLRGBA8TextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
 
     private var possuiTexturaValida = false;
     private var jadestruiu = false
@@ -19,7 +21,7 @@ class MGlBufferTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
     private val entriesPerPixel = 4
     private val bytesPerEntry = 1
 
-    var IndiceTexturaGL = GL32.GL_TEXTURE3
+    var IndiceTexturaGL = GL32.GL_TEXTURE4
 
     var drawer:(Float, Float)-> TipoCor = dummyTexture()
 
@@ -50,8 +52,17 @@ class MGlBufferTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
         GL32.glDeleteTextures(textureHandle)
     }
 
-    fun createTextureFromBuffer(dataBuffer:ArrayIteracoes) {
+    fun createTextureFromBuffer(intArray:IntArray) {
         GL32.glGenBuffers(bufferHandle)
+
+        val byteArray = ByteArray(intArray.size*4){
+            it -> (Random().nextInt(256).toByte())
+        }
+
+        val byteBuffer = ByteBuffer.allocateDirect(intArray.size*4)
+                .order(ByteOrder.nativeOrder())
+        byteBuffer.put(byteArray).position(0)
+
         if (bufferHandle[0] != 0) {
             GL32.glActiveTexture(IndiceTexturaGL)
             GL32.glBindBuffer(
@@ -60,7 +71,7 @@ class MGlBufferTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
             )
             GL32.glBufferData(
                     GL32.GL_TEXTURE_BUFFER,
-                    dataBuffer,
+                    intArray,
                     GL32.GL_STATIC_DRAW
             )
         }else{ throw RuntimeException("Error generating Buffer Opengl.")}
@@ -74,7 +85,8 @@ class MGlBufferTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
             )
         }else{ throw RuntimeException("Error generating Texture Opengl.")}
 
-        GL32.glTexBuffer(GL32.GL_TEXTURE_BUFFER,GL32.GL_R32UI,bufferHandle[0])
+
+        GL32.glTexBuffer(GL32.GL_TEXTURE_BUFFER,GL32.GL_RGBA8,bufferHandle[0])
 
     }
 
