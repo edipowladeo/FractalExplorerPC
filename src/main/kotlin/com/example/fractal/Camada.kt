@@ -7,12 +7,12 @@ Os vetores coordCelulasX(CX) e Os coordCelulasY(CY) armazendam as coordenadas no
 As coordenadas no plano são copiadas paras as células por valor , visto que são constantes.
 
 
-        CX0 CX1 CX2 CX3
+CX0 CX1 CX2 CX3
 
- CY0    c00 c10 c20 c30
- CY1    c01 c11 c21 c31
- CY2    c02 c12 c22 c32
- CX3    c03 c13 c23 c33
+CY0    c00 c10 c20 c30
+CY1    c01 c11 c21 c31
+CY2    c02 c12 c22 c32
+CX3    c03 c13 c23 c33
 
 A matriz de células é implementada usando uma Lista (colunas) de lista (linhas) de células
 
@@ -24,7 +24,7 @@ estes métodos manipulam e os vetores coordCelulas e a matriz de células ao mes
 class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
 {
 
-//TODO: isto é realmente necessario? classe coordcelula1d, pode ser implementados dois vetores
+    //TODO: isto é realmente necessario? classe coordcelula1d, pode ser implementados dois vetores
     private class CoordCelula1D{
         var coordenadaPlano : CoordenadaPlano = 0.0
         var coordenadaTela : CoordenadaTela = 0.0
@@ -32,11 +32,11 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
         constructor(CoordenadaPlano : CoordenadaPlano, CoordenadaTela : CoordenadaTela){
             coordenadaPlano = CoordenadaPlano
             coordenadaTela = CoordenadaTela
-            }
+        }
         constructor(CoordenadaPlano : CoordenadaPlano){
             coordenadaPlano = CoordenadaPlano
         }
-        }
+    }
     enum class Direcao {
         INCREMENTO, DECREMENTO
     }
@@ -51,7 +51,7 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
 
     /**Lista (colunas) de lista (linhas) de células*/
     internal var Celulas = MutableList<MutableList<Celula>>(1){MutableList(1){
-            Celula(this,coordenadasIniciais,janela.tamSprite)
+        Celula(this,coordenadasIniciais,janela.tamSprite)
     }
     }
 
@@ -82,22 +82,24 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
             janela.regiaoDesenhoPlano.max.y
         )
 
+        //Aloca todas células
         while (coordCelulasX.first().coordenadaPlano > coord_min_alocar.x) adicionarColuna(Direcao.DECREMENTO)
-        while (coordCelulasX.last().coordenadaPlano < coord_max_alocar.x) adicionarColuna(Direcao.INCREMENTO)
-        while (coordCelulasY.first().coordenadaPlano > coord_min_alocar.y) adicionarLinha(Direcao.DECREMENTO)
-        while (coordCelulasY.last().coordenadaPlano < coord_max_alocar.y) adicionarLinha(Direcao.INCREMENTO)
+        while (coordCelulasX.last() .coordenadaPlano < coord_max_alocar.x) adicionarColuna(Direcao.INCREMENTO)
+        while (coordCelulasY.first().coordenadaPlano > coord_min_alocar.y) adicionarLinha (Direcao.DECREMENTO)
+        while (coordCelulasY.last() .coordenadaPlano < coord_max_alocar.y) adicionarLinha (Direcao.INCREMENTO)
 
-           if (coordCelulasX.size > 1){
-        if (coordCelulasX.first().coordenadaPlano < coord_min_desalocar.x) removerColuna(Direcao.DECREMENTO)
-    }
+        //Desaloca apenas uma
         if (coordCelulasX.size > 1){
-        if (coordCelulasX.last().coordenadaPlano > coord_max_desalocar.x)         removerColuna(Direcao.INCREMENTO)
+            if (coordCelulasX.first().coordenadaPlano < coord_min_desalocar.x) removerColuna(Direcao.DECREMENTO)
+        }
+        if (coordCelulasX.size > 1){
+            if (coordCelulasX.last().coordenadaPlano > coord_max_desalocar.x)  removerColuna(Direcao.INCREMENTO)
         }
         if (coordCelulasY.size > 1){
-         if (coordCelulasY.first().coordenadaPlano < coord_min_desalocar.y)         removerLinha(Direcao.DECREMENTO)
+            if (coordCelulasY.first().coordenadaPlano < coord_min_desalocar.y) removerLinha(Direcao.DECREMENTO)
         }
         if (coordCelulasY.size > 1){
-        if (coordCelulasY.last().coordenadaPlano > coord_max_desalocar.y)         removerLinha(Direcao.INCREMENTO)
+            if (coordCelulasY.last().coordenadaPlano > coord_max_desalocar.y)  removerLinha(Direcao.INCREMENTO)
         }
     }
 
@@ -138,11 +140,11 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
     //TODO: verificar se é melhor usar este método na camada toda ou chamar o método getCoordenadaTelaDaCelula na hora de renderizar
     fun posicionaTodasCelulasNaTela(){
         PosicionaCamadaNaTela()
-            Celulas.forEachIndexed{i,colunas ->
-                colunas.forEachIndexed{j,linhas ->
-                    linhas.coordenadasTela = getCoordenadaTelaDaCelula(i,j)
-                }
+        Celulas.forEachIndexed{i,colunas ->
+            colunas.forEachIndexed{j,linhas ->
+                linhas.coordenadasTela = getCoordenadaTelaDaCelula(i,j)
             }
+        }
     }
 
     fun logCells(){
@@ -262,7 +264,7 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
     }
 
     override fun toString(): String {
-       return super.toString()
+        return super.toString()
     }
 
 

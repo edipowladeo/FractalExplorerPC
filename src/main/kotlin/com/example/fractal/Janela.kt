@@ -29,15 +29,14 @@ class Janela(
 
     val texturaPlaceholder = gerenciadorDeImplementacoes.bufferTexture(100, 100, dummyTexture())
 
-    var regiaoDesenhoPlano = RetanguloPlano()
+
 
     /**VARIAVEIS DE ESTADO vars*/
-    //TODO: injeção de dependencia não tá funcionando legal
+    //TODO: injeção de dependencia não tá funcionando legal no android
 
-    //var camadasDesejadas = 7..7 // passei para local no metodo adicionarRemoverCamadas
     var cameraAtual = cameraInicial
     var cameraDesejada = cameraAtual
-
+    var regiaoDesenhoPlano = RetanguloPlano()
 
     val poolArrayIteracoes = ObjectPool<TipoArrayIteracoes>(
         10, 200, 1L,
