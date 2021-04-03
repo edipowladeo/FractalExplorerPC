@@ -11,7 +11,7 @@ class GerenciadorDeImplementacoesPC : GerenciadorDeImplementacoes {
     }
 
     override fun bufferTexture(largura: Int, altura: Int, drawer: (Float, Float) -> TipoCor): TextureWrapper = MGlBufferTextureWrapper(altura, largura, drawer)
-    override fun bufferTexture(largura: Int, altura: Int, iteracoes: ArrayIteracoes): TextureWrapper = MGlBufferTextureWrapper(altura, largura, iteracoes)
+    override fun bufferTexture(largura: Int, altura: Int, iteracoes: TipoArrayIteracoes): TextureWrapper = MGlBufferTextureWrapper(altura, largura, iteracoes)
 
     override fun uniformBufferObject(): TextureWrapper {
         TODO("Not yet implemented")

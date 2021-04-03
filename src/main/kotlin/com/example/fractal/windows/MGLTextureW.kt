@@ -1,6 +1,6 @@
 package com.example.fractal.windows
 
-import com.example.fractal.ArrayIteracoes
+import com.example.fractal.TipoArrayIteracoes
 import org.lwjgl.opengl.GL32
 
 import com.example.fractal.TextureWrapper
@@ -13,7 +13,7 @@ class MGlTextureW(val largura:Int, val altura:Int):TextureWrapper {
     private var possuiTexturaValida = false;
     private var jadestruiu = false
 
-    var iteracoes: ArrayIteracoes? = null
+    var iteracoes: TipoArrayIteracoes? = null
 
     private val entriesPerPixel = 4
     private val bytesPerEntry = 1
@@ -31,7 +31,7 @@ class MGlTextureW(val largura:Int, val altura:Int):TextureWrapper {
         populateByteArrayUsingDrawerFunction()
     }
 
-    constructor(largura:Int,altura:Int,Iteracoes: ArrayIteracoes) : this(largura,altura) {
+    constructor(largura:Int,altura:Int,Iteracoes: TipoArrayIteracoes) : this(largura,altura) {
         iteracoes = Iteracoes;
     }
 

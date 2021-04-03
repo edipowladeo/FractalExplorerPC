@@ -11,12 +11,21 @@ typealias  CoordenadaTelai = Int
 typealias  CoordenadasTelai = Cvetor2i
 typealias  TipoDelta = Double
 typealias  TipoCor = TRGB
-typealias  ArrayIteracoes = IntArray
-typealias  SegundosI = Long
+typealias  TipoArrayIteracoes = IntArray
+typealias  TipoSegundosI = Long
 
+class RetanguloPlano{
+    var min = CoordenadasPlano()
+    var max = CoordenadasPlano()
+    constructor(){}
+    constructor(Min:CoordenadasPlano,Max:CoordenadasPlano){
+        min=Min
+        max=Max
+    }
+}
 
 class CoordenadasPlanoEDelta : CoordenadasPlano {
-    var Delta: TipoDelta =0.0
+    var Delta: TipoDelta = 0.0
     constructor():super(){}
     constructor(coordenadas: CoordenadasPlano, delta: TipoDelta):super(coordenadas){
         Delta=delta

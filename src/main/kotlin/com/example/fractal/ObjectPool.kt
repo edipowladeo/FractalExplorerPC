@@ -30,8 +30,8 @@ class ObjectPool<T>(val createObject:()->T) {
      * When the number of objects is greater than maxIdle, too many instances will be removed.
      */
     constructor(
-            minIdle: Int, maxIdle: Int, validationInterval: SegundosI,
-            construtor: () -> T
+        minIdle: Int, maxIdle: Int, validationInterval: TipoSegundosI,
+        construtor: () -> T
     ):this(construtor) {
         // initialize pool
         initialize(minIdle)
@@ -60,9 +60,9 @@ class ObjectPool<T>(val createObject:()->T) {
     }
 
     constructor(
-            minIdle: Int, maxIdle: Int, validationInterval: SegundosI,
-            construtor: () -> T,
-            destrutor:(T)->Unit
+        minIdle: Int, maxIdle: Int, validationInterval: TipoSegundosI,
+        construtor: () -> T,
+        destrutor:(T)->Unit
     ):this(construtor) {
         // initialize pool
         initialize(minIdle)

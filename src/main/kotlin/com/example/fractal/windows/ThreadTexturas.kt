@@ -8,8 +8,8 @@ class ThreadTexturas(val janela: Janela):Thread() {
     override fun run() {
         try {
             while (true) {
-                janela.TarefasDesalocarTextura.executarTodas();
-                janela.TarefasAlocarTextura.executarTodas();
+                janela.tarefasDesalocarTextura.executarTodas();
+                janela.tarefasAlocarTextura.executarTodas();
                 }
         } catch (e: InterruptedException) {
             e.printStackTrace()

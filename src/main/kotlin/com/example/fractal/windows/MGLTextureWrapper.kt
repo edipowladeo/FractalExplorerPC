@@ -1,6 +1,6 @@
 package com.example.fractal.windows
 
-import com.example.fractal.ArrayIteracoes
+import com.example.fractal.TipoArrayIteracoes
 import org.lwjgl.opengl.GL32
 
 import com.example.fractal.TextureWrapper
@@ -25,7 +25,7 @@ class MGlTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
         return         jadestruiu }
 
 
-    var iteracoes: ArrayIteracoes? = null
+    var iteracoes: TipoArrayIteracoes? = null
     private val entriesPerPixel = 4
     private val bytesPerEntry = 1
 
@@ -47,7 +47,7 @@ class MGlTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
         //createTextureFromBuffer()
     }
 
-    constructor(largura:Int,altura:Int,Iteracoes: ArrayIteracoes) : this(largura,altura) {
+    constructor(largura:Int,altura:Int,Iteracoes: TipoArrayIteracoes) : this(largura,altura) {
         setDoubleArray( Iteracoes)
     }
 
@@ -63,7 +63,7 @@ class MGlTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
         return possuiTexturaValida
     }
 
-    fun setDoubleArray( Iteracoes: ArrayIteracoes)
+    fun setDoubleArray( Iteracoes: TipoArrayIteracoes)
     {
         iteracoes = Iteracoes
     }
@@ -115,7 +115,7 @@ class MGlTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
 
 
     @ExperimentalUnsignedTypes
-    fun populateBufferFromDoubleArray(iteracoes: ArrayIteracoes){
+    fun populateBufferFromDoubleArray(iteracoes: TipoArrayIteracoes){
         dataArray= ByteArray(largura*altura*entriesPerPixel*bytesPerEntry){0}.also{
             iteracoes.forEachIndexed{indice,valor ->
                 val indiceNaTexutraByte = indice * entriesPerPixel

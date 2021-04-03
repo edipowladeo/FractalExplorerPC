@@ -10,7 +10,6 @@ import org.lwjgl.glfw.GLFW
 import org.lwjgl.glfw.GLFWErrorCallback
 import org.lwjgl.opengl.GL
 import org.lwjgl.opengl.GL32 as OGL
-import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
 
 
@@ -172,8 +171,8 @@ class HelloWordWindow : DesenhistaDeCelulas() {
             //janela.TarefasAlocarTextura.executarPrimeira()
             //  tempoinicio = SystemClock.uptimeMillis()
             while (janela.relogio.getCurrentTimeMs() - tempoInicio < 15) {
-                janela.TarefasDesalocarTextura.executarPrimeira()
-                janela.TarefasAlocarTextura.executarPrimeira()
+                janela.tarefasDesalocarTextura.executarPrimeira()
+                janela.tarefasAlocarTextura.executarPrimeira()
             }
         }
     }

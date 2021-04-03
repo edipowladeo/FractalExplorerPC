@@ -45,7 +45,7 @@ class Celula(val camada: Camada, val coordenadasPlano: CoordenadasPlano, val tam
 
     /** usado caso o contexto opencl seja resetado*/
     fun solicitarGeracaoDeTexturaGL(){
-        camada.janela.TarefasAlocarTextura.add(
+        camada.janela.tarefasAlocarTextura.add(
             TarefaCriarTexturaGL(textura)
         )
     }
@@ -109,7 +109,7 @@ class Celula(val camada: Camada, val coordenadasPlano: CoordenadasPlano, val tam
         camada.janela.apply {
             //poolTextureWrapper.returnObject(textura)
 
-            TarefasDesalocarTextura.add(
+            tarefasDesalocarTextura.add(
                 TarefaDesalocarTexturaGL(textura)
             )
             poolArrayIteracoes.returnObject(iteracoes)

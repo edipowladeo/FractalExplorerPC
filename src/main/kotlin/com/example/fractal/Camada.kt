@@ -66,20 +66,20 @@ class Camada(val janela: Janela, coordenadasIniciais: CoordenadasPlanoEDelta)
         var alturaPlano = janela.tamSprite.y.toDouble() * Delta
 
         val coord_min_alocar = CoordenadasPlano(
-            janela.coord_min.x,
-            janela.coord_min.y
+            janela.coordMin.x,
+            janela.coordMin.y
         )
         val coord_max_alocar = CoordenadasPlano(
-            janela.coord_max.x - larguraPlano,
-            janela.coord_max.y - alturaPlano
+            janela.coordMax.x - larguraPlano,
+            janela.coordMax.y - alturaPlano
         )
         val coord_min_desalocar = CoordenadasPlano(
-            janela.coord_min.x - larguraPlano,
-            janela.coord_min.y - alturaPlano
+            janela.coordMin.x - larguraPlano,
+            janela.coordMin.y - alturaPlano
         )
         val coord_max_desalocar = CoordenadasPlano(
-            janela.coord_max.x,
-            janela.coord_max.y
+            janela.coordMax.x,
+            janela.coordMax.y
         )
 
         while (coordCelulasX.first().coordenadaPlano > coord_min_alocar.x) adicionarColuna(Direcao.DECREMENTO)

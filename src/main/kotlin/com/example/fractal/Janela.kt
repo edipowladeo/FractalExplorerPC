@@ -21,7 +21,7 @@ class Janela(
         val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes,
         private var dimensaoJanelaSaida: CoordenadasTela
 ) : JanelaPropriedades() {
-    val lock = ReentrantLock()
+    private val lock = ReentrantLock()
 
     private var paleta: Paleta
 
@@ -29,8 +29,8 @@ class Janela(
 
     val texturaPlaceholder = gerenciadorDeImplementacoes.bufferTexture(100, 100, dummyTexture())
 
-    var coord_max = CoordenadasPlano(0.0, 0.0)
-    var coord_min = CoordenadasPlano(0.0, 0.0)
+    var coordMax = CoordenadasPlano(0.0, 0.0)
+    var coordMin = CoordenadasPlano(0.0, 0.0)
 
     /**VARIAVEIS DE ESTADO vars*/
     //TODO: injeção de dependencia não tá funcionando legal
@@ -40,20 +40,20 @@ class Janela(
     var PosicaoCameraDesejada = PosicaoCameraAtual
 
 
-    val poolArrayIteracoes = ObjectPool<ArrayIteracoes>(
+    val poolArrayIteracoes = ObjectPool<TipoArrayIteracoes>(
         10, 200, 1L,
-        fun(): ArrayIteracoes { return ArrayIteracoes(tamSprite.x * tamSprite.y) { 0 } })
+        fun(): TipoArrayIteracoes { return TipoArrayIteracoes(tamSprite.x * tamSprite.y) { 0 } })
 
     /*   val poolTextureWrapper = ObjectPool<TextureWrapper>(
         10,
         fun(): TextureWrapper {return MGlTextureWrapper(100,100,dummyTexture())})
 */
 
-    val TarefasDesalocarTextura = GerenciadorDeTarefas<TarefaDesalocarTexturaGL>()
-    val TarefasAlocarTextura = GerenciadorDeTarefas<TarefaCriarTexturaGL>()
+    val tarefasDesalocarTextura = GerenciadorDeTarefas<TarefaDesalocarTexturaGL>()
+    val tarefasAlocarTextura = GerenciadorDeTarefas<TarefaCriarTexturaGL>()
 
-    val threadProcessamento = List<ThreadProcessamento>(12){ ThreadProcessamento(this) }
-    val ThreadManipularJanelas = ThreadManipularJanelas(this)
+    private val threadsProcessamento = List<ThreadProcessamento>(12){ ThreadProcessamento(this) }
+    private val threadManipularJanelas = ThreadManipularJanelas(this)
 
     /** key da camada é o valor de magnificação*/
     /** quanto maior, menor é o tamanho aparente da camada e portanto maior resolução  qualidade aparente */
@@ -62,11 +62,11 @@ class Janela(
 
     init {
         paleta = Paleta(this)
-        TarefasAlocarTextura.add(TarefaCriarTexturaGL(texturaPlaceholder))
+        tarefasAlocarTextura.add(TarefaCriarTexturaGL(texturaPlaceholder))
         atualizaCameraECamadas()
 
-        ThreadManipularJanelas.start()
-        threadProcessamento.forEach{it.start()}
+        threadManipularJanelas.start()
+        threadsProcessamento.forEach{it.start()}
         //TODO: Cria thread, porém se o objeto janela sai de escopo, thread fica solta
     }
 
@@ -124,8 +124,6 @@ class Janela(
         paleta.bind()
         camadas.values.forEach { camada ->
             camada.posicionaTodasCelulasNaTela()
-        }
-        camadas.forEach { (t, camada) ->
             val escala =camada.Delta * tamSprite.x / PosicaoCameraAtual.Delta
             camada.Celulas.forEachIndexed { i, colunas ->
                 colunas.forEachIndexed() { j, linhas ->
@@ -157,10 +155,10 @@ class Janela(
         dimensaoJanelaSaida.x*0.5*fator_debug,
         dimensaoJanelaSaida.y*0.5*fator_debug)
 
-        coord_max = getCoordenadasPlano(janela_desenho)
+        coordMax = getCoordenadasPlano(janela_desenho)
         janela_desenho.x=- janela_desenho.x
         janela_desenho.y=- janela_desenho.y
-        coord_min = getCoordenadasPlano(janela_desenho)
+        coordMin = getCoordenadasPlano(janela_desenho)
     //    println("coord max $coord_max coord min $coord_min")
     }
 
@@ -214,8 +212,8 @@ class Janela(
         lock.lock()
         val stringB = StringBuilder()
         stringB.append("Dimensoes da Janela: " + dimensaoJanelaSaida)
-        stringB.append("\nFila Criar Textura " + TarefasAlocarTextura.getQtdeTarefas() )
-        stringB.append("\nFila Desalocar Textura " + TarefasDesalocarTextura.getQtdeTarefas() )
+        stringB.append("\nFila Criar Textura " + tarefasAlocarTextura.getQtdeTarefas() )
+        stringB.append("\nFila Desalocar Textura " + tarefasDesalocarTextura.getQtdeTarefas() )
         //  textoDebug.append("\nmin:" +coord_min)
         //  textoDebug.append("\nmax:" +coord_max)
         stringB.append("\nCoord Camera Atual " + PosicaoCameraAtual)

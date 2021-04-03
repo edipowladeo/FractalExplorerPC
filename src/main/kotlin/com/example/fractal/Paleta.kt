@@ -1,7 +1,6 @@
 package com.example.fractal
 
 import com.example.fractal.windows.MGLRGBA8TextureWrapper
-import java.util.*
 import kotlin.math.sin
 
 class Paleta(val janela: Janela) {
@@ -19,7 +18,7 @@ class Paleta(val janela: Janela) {
         texturaPaleta = MGLRGBA8TextureWrapper(256,256,paleta)
 
 
-        janela.TarefasAlocarTextura.add(TarefaCriarTexturaGL(texturaPaleta))
+        janela.tarefasAlocarTextura.add(TarefaCriarTexturaGL(texturaPaleta))
     }
 
 

@@ -1,14 +1,11 @@
 package com.example.fractal.windows
 
-import com.example.fractal.ArrayIteracoes
+import com.example.fractal.TipoArrayIteracoes
 import org.lwjgl.opengl.GL32
 
 import com.example.fractal.TextureWrapper
 import com.example.fractal.TipoCor
 import com.example.fractal.dummyTexture
-import java.nio.ByteBuffer
-import java.nio.ByteOrder
-import java.util.*
 
 /**x e y da funcao drawer deve ir de -0.5 até 0.5*/
 class MGLRGBA8TextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
@@ -16,7 +13,7 @@ class MGLRGBA8TextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
     private var possuiTexturaValida = false;
     private var jadestruiu = false
 
-    var iteracoes: ArrayIteracoes? = null
+    var iteracoes: TipoArrayIteracoes? = null
 
     private val entriesPerPixel = 4
     private val bytesPerEntry = 1
@@ -35,7 +32,7 @@ class MGLRGBA8TextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
         populateByteArrayUsingDrawerFunction()
     }
 
-    constructor(largura:Int,altura:Int,Iteracoes: ArrayIteracoes) : this(largura,altura) {
+    constructor(largura:Int,altura:Int,Iteracoes: TipoArrayIteracoes) : this(largura,altura) {
         iteracoes = Iteracoes
     }
 
