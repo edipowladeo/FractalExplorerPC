@@ -6,7 +6,7 @@ package com.example.fractal
 class TarefaProcessamento(val celula: Celula):Runnable {
    override fun run(){
         if (!celula.marcadaParaDestruicao)  {
-            celula.ProcessaMandelbrotECriaTextura()
+            celula.processaIteracoesECriaTextura()
             celula.matrizIteracoesEstaCalculada = true
         }
     }

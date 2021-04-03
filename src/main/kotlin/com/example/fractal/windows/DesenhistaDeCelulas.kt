@@ -57,7 +57,7 @@ open class DesenhistaDeCelulas : DesenhistaDeCelulas {
     }*/
 
     override fun desenharCelula(celula: Celula, escala:Float){
-        celula.BindTexture()
+        celula.bindTexture()
         OGL.glUniform3f(
                 handlePosicaoCelulas,
                 celula.coordenadasTela.x.toFloat(),
