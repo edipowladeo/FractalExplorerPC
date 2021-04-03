@@ -4,7 +4,7 @@ fun main() {
 
     val helloWorld = HelloWordWindow()
 
-    helloWorld.run()
+  //  HelloWordWindow.run()
 
 }
 

@@ -163,6 +163,7 @@ class Camada(val janela: Janela, coordenadasIniciais: CoordenadasPlanoEDelta)
     //TODO: Adicionar Coluna e linha não seta coordenadas tela dos vetores, eles ficam em zero durante um frame
     //TODO: refatorar nomes
     fun adicionarColuna(direcao: Direcao){
+        println("adicionou")
         val tamY = coordCelulasY.size
         val tamX = coordCelulasX.size
 
@@ -218,6 +219,7 @@ class Camada(val janela: Janela, coordenadasIniciais: CoordenadasPlanoEDelta)
 
 
     fun removerColuna(direcao: Direcao){
+        println("removeu")
         val tamY = coordCelulasY.size
         val tamX = coordCelulasX.size
 

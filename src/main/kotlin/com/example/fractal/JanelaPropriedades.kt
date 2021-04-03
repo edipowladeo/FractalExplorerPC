@@ -20,14 +20,14 @@ JanelaPropriedades {
     var velocidadeCircularCores = 1f
 
     //TODO: remover fator debug e criar janelas de alocação e inatividade
-    val fator_debug = 0.9//1//0.5 //tamanho da janela de alocação, usado para debug, release deve ser =1
-    val minTamanhoAparentePixel = 32f//2f // mínimo tamanho que o pixel pode assumir na tela, valores <1 representam multisampling
-    val quantidadeDeCamadasAlemDaPrincipal = 0//4  // camadas de preview (baixa resolucao) processadas antes da camada de alta qualidade
-    val tamSprite = Cvetor2i(32,32)
+    val fator_debug = 1.0//1//0.5 //tamanho da janela de alocação, usado para debug, release deve ser =1
+    val minTamanhoAparentePixel = 1f//2f // mínimo tamanho que o pixel pode assumir na tela, valores <1 representam multisampling
+    val quantidadeDeCamadasAlemDaPrincipal = 5//4  // camadas de preview (baixa resolucao) processadas antes da camada de alta qualidade
+    val tamSprite = Cvetor2i(128,128)
 
     var TaxaZoom = 0.0f
     var TaxaPan = 0.0f
-    var MagInicial = 10
+    var MagInicial = 11
 
     var MaginiciallF = pow(0.5,MagInicial.toDouble())/1.12
     var PosicaoCameraInicial = CoordenadasPlanoEDelta(CoordenadasPlano(-0.5,0.0),MaginiciallF)

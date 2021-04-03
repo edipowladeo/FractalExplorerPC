@@ -55,14 +55,6 @@ class MGLRGBA8TextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
     fun createTextureFromBuffer(intArray:IntArray) {
         GL32.glGenBuffers(bufferHandle)
 
-        val byteArray = ByteArray(intArray.size*4){
-            it -> (Random().nextInt(256).toByte())
-        }
-
-        val byteBuffer = ByteBuffer.allocateDirect(intArray.size*4)
-                .order(ByteOrder.nativeOrder())
-        byteBuffer.put(byteArray).position(0)
-
         if (bufferHandle[0] != 0) {
             GL32.glActiveTexture(IndiceTexturaGL)
             GL32.glBindBuffer(
@@ -84,7 +76,6 @@ class MGLRGBA8TextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
                     textureHandle[0]
             )
         }else{ throw RuntimeException("Error generating Texture Opengl.")}
-
 
         GL32.glTexBuffer(GL32.GL_TEXTURE_BUFFER,GL32.GL_RGBA8,bufferHandle[0])
 

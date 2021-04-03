@@ -14,6 +14,7 @@ uniform mediump samplerBuffer u_Paleta;    // The input texture buffer.
 
 uniform float u_tempo;
 uniform float u_escalaPaleta;
+uniform ivec2 u_dimSprite;
 
 in vec2 v_TexturePosition;		// Interpolated position for this fragment.
 in vec4 v_Color;
@@ -36,11 +37,10 @@ vec4 paleta(uint iteracoes,float deltaT){
 
 void main()
 {
-    float multiplicador = 32.0;
 
-    int x = int(v_TexturePosition.x*multiplicador);
-    int y = int(v_TexturePosition.y*multiplicador);
-    int pidex = y*int(multiplicador)+x;
+    int x = int(v_TexturePosition.x*float(u_dimSprite.x));
+    int y = int(v_TexturePosition.y*float(u_dimSprite.y));
+    int pidex = y*int(u_dimSprite.x)+x;
 
     vec4 corIteracoes = paleta(texelFetch(u_Iteracoes,pidex).r,u_tempo);
 

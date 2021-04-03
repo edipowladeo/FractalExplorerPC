@@ -1,9 +1,14 @@
 package com.example.fractal
 
+typealias UniformHandle = Int
+typealias WindowHandle = Long
+
 typealias  CoordenadaPlano = Double
 typealias  CoordenadasPlano = Cvetor2d
 typealias  CoordenadaTela = Double
 typealias  CoordenadasTela = Cvetor2d
+typealias  CoordenadaTelai = Int
+typealias  CoordenadasTelai = Cvetor2i
 typealias  TipoDelta = Double
 typealias  TipoCor = TRGB
 typealias  ArrayIteracoes = IntArray

@@ -1,6 +1,6 @@
 package com.example.fractal
 
-import com.example.fractal.windows.MGLRGBA8TextureWrapper
+import com.example.fractal.android.ThreadProcessamento
 import com.example.fractal.windows.ThreadManipularJanelas
 import java.lang.Math.pow
 import java.util.*
@@ -18,25 +18,21 @@ import kotlin.math.pow
  * somente caso esteja muito lento (profiling) seria a ultima coisa a fazer
   */
 class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : JanelaPropriedades() {
+    val lock = ReentrantLock()
 
-    private lateinit var paleta: Paleta
+    private var paleta: Paleta
 
     val relogio = gerenciadorDeImplementacoes.relogio()
 
     val texturaPlaceholder = gerenciadorDeImplementacoes.bufferTexture(100, 100, dummyTexture())
-
-    val TarefasDesalocarTextura = GerenciadorDeTarefas<TarefaDesalocarTexturaGL>()
-    val TarefasAlocarTextura = GerenciadorDeTarefas<TarefaCriarTexturaGL>()
-    val lock = ReentrantLock()
 
     var coord_max = CoordenadasPlano(0.0, 0.0)
     var coord_min = CoordenadasPlano(0.0, 0.0)
 
     /**VARIAVEIS DE ESTADO vars*/
     //TODO: injeção de dependencia não tá funcionando legal
-    private var janelaSaidaDefeito = CoordenadasTela(3000.0, 2000.0)
+    private var dimensaoJanelaSaida = CoordenadasTela(100.0, 100.0)
 
-    private var janelaHardCoded = CoordenadasTela(3000.0,2000.0)
     //var camadasDesejadas = 7..7 // passei para local no metodo adicionarRemoverCamadas
     var PosicaoCameraAtual = PosicaoCameraInicial
     var PosicaoCameraDesejada = PosicaoCameraAtual
@@ -51,6 +47,11 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
         fun(): TextureWrapper {return MGlTextureWrapper(100,100,dummyTexture())})
 */
 
+    val TarefasDesalocarTextura = GerenciadorDeTarefas<TarefaDesalocarTexturaGL>()
+    val TarefasAlocarTextura = GerenciadorDeTarefas<TarefaCriarTexturaGL>()
+
+    val threadProcessamento = List<ThreadProcessamento>(12){ ThreadProcessamento(this) }
+    val ThreadManipularJanelas = ThreadManipularJanelas(this)
 
     /** key da camada é o valor de magnificação*/
     /** quanto maior, menor é o tamanho aparente da camada e portanto maior resolução  qualidade aparente */
@@ -61,9 +62,9 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
         paleta = Paleta(this)
         TarefasAlocarTextura.add(TarefaCriarTexturaGL(texturaPlaceholder))
         atualizaCameraECamadas()
-        val ThreadManipularJanelas = ThreadManipularJanelas(this)
-        ThreadManipularJanelas.start()
 
+        ThreadManipularJanelas.start()
+        threadProcessamento.forEach{it.start()}
         //TODO: Cria thread, porém se o objeto janela sai de escopo, thread fica solta
     }
 
@@ -80,13 +81,14 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
     }
 
     fun setDimensaoDaJanelaDeSaida(dimensao: CoordenadasTela) {
-        var dimensaoold = janelaSaidaDefeito
-//        dimensaoDaJanelaDeSaida = dimensao
+  //      var dimensaoold = dimensaoJanelaSaida
+        dimensaoJanelaSaida = dimensao
 
+       // println("Janela Redimensioanda $dimensaoJanelaSaida")
     }
 
     fun getDimensaoDaJanelaDeSaida(): CoordenadasTela {
-        return janelaSaidaDefeito
+        return dimensaoJanelaSaida
     }
 
     fun getCoordenadasPlano(coordenadasTela: CoordenadasTela): CoordenadasPlano {
@@ -109,16 +111,13 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
         lock.unlock()
     }
 
-    fun atualizaCameraECamadasR(){
-
-    }
 
     fun desenharCelulas(desenhista: DesenhistaDeCelulas){
         lock.lock()
      //   atualizaCameraECamadas()
         val time = relogio.getCurrentTimeMs() % 10240L
        // val angleInRad = 6.28318530f / 10000.0f * time.toFloat() * velocidadeCircularCores
-        desenhista.AtualizaUniforms( time.toFloat(),escalaPaleta)
+        desenhista.AtualizaUniforms(time.toFloat(),escalaPaleta)
         paleta.bind()
         camadas.values.forEach { camada ->
             camada.posicionaTodasCelulasNaTela()
@@ -151,25 +150,19 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
         return false //camada não possui tarefas a executar
     }
 
-    //TODO: implementar se for util
-   /* fun desenhar(){
-        lock.lock()
-
-        lock.unlock()
-    }*/
-
     private fun atualizaIntervaloDesenho(){
         var janela_desenho = CoordenadasTela(
-        janelaSaidaDefeito.x*0.5*fator_debug,
-        janelaSaidaDefeito.y*0.5*fator_debug)
+        dimensaoJanelaSaida.x*0.5*fator_debug,
+        dimensaoJanelaSaida.y*0.5*fator_debug)
 
         coord_max = getCoordenadasPlano(janela_desenho)
         janela_desenho.x=- janela_desenho.x
         janela_desenho.y=- janela_desenho.y
         coord_min = getCoordenadasPlano(janela_desenho)
+    //    println("coord max $coord_max coord min $coord_min")
     }
 
-      private fun adicionarRemoverCamadas()    {
+      private fun adicionarRemoverCamadas() {
         val maiorvalor = log((1.0/(PosicaoCameraAtual.Delta*minTamanhoAparentePixel)),2.0).toInt()
         val menorvalor = maiorvalor - quantidadeDeCamadasAlemDaPrincipal
 
@@ -218,7 +211,7 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
     override fun toString(): String {
         lock.lock()
         val stringB = StringBuilder()
-        stringB.append("Dimensoes da Janela: " + janelaSaidaDefeito)
+        stringB.append("Dimensoes da Janela: " + dimensaoJanelaSaida)
         stringB.append("\nFila Criar Textura " + TarefasAlocarTextura.getQtdeTarefas() )
         stringB.append("\nFila Desalocar Textura " + TarefasDesalocarTextura.getQtdeTarefas() )
         //  textoDebug.append("\nmin:" +coord_min)
@@ -226,11 +219,15 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
         stringB.append("\nCoord Camera Atual " + PosicaoCameraAtual)
         camadas.forEach{camada ->
             stringB.append("\n\t" +camada.key+": Fila Processos "+camada.value.TarefasProcessamento.getQtdeTarefas())}
-        return stringB.toString()
         lock.unlock()
+        return stringB.toString()
     }
 
     private fun getDeltaFromIntegerMagnification(mag:Int): TipoDelta {
        return pow(0.5,mag.toDouble())
+    }
+
+    fun liberarRecursos() {
+       // TODO("Not yet implemented")
     }
 }

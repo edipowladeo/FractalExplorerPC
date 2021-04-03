@@ -2,7 +2,8 @@ package com.example.fractal.windows
 
 import com.example.fractal.CoordenadasTela
 import com.example.fractal.Janela
-import com.example.fractal.android.ThreadProcessamento
+import com.example.fractal.UniformHandle
+import com.example.fractal.WindowHandle
 import org.lwjgl.Version
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW
@@ -12,156 +13,155 @@ import org.lwjgl.opengl.GL32 as OGL
 import org.lwjgl.system.MemoryStack
 import org.lwjgl.system.MemoryUtil
 
+
 class HelloWordWindow : DesenhistaDeCelulas() {
-    // The window handle
 
-    private var window: Long = 0
+    private var windowHandle: WindowHandle = 0
 
-    val janela = Janela(GerenciadorDeImplementacoesPC())
+    private val janelaFractal = Janela(GerenciadorDeImplementacoesPC())
 
-    var XX = 0f;
-    var YY = 0f;
-    var largura: Float = 2000.0f
-    var altura: Float = 1500.0f
-    var textoDebug = StringBuilder()
+    private val reducao = 2
+
+    private var largura: Int = 3840 / reducao
+    private var altura: Int = 2000 / reducao
+
+    private val textoDebug = StringBuilder()
 
 
     private lateinit var myGlProgram: MyGLProgramPC
-    var mProgramHandle = 0
-    var mWindowSizeUniformHandle = 0
-    var mIteracoesTexBufferUniformHandle = 0
-    var mPaletaTexBufferUniformHandle = 0
+    private var mProgramHandle: UniformHandle = 0
+    private var mWindowSizeUniformHandle: UniformHandle = 0
+    private var mIteracoesTexBufferUniformHandle: UniformHandle = 0
+    private var mPaletaTexBufferUniformHandle: UniformHandle = 0
+    private var mDimSpriteUniformHandle: UniformHandle = 0
+
+    init{
+
+        run()
+    }
 
     fun run() {
         println("Hello LWJGL " + Version.getVersion() + "!")
-        init()
-        loop()
+        initOpenGLWindow()
+        setCallBacks()
+        initOpenGlProgram()
+        configureUniforms()
+
+        while (!GLFW.glfwWindowShouldClose(windowHandle)) {
+            loop()
+        }
+
+        // Free Resources
+        janelaFractal.liberarRecursos()
 
         // Free the window callbacks and destroy the window
-        Callbacks.glfwFreeCallbacks(window)
-        GLFW.glfwDestroyWindow(window)
+        Callbacks.glfwFreeCallbacks(windowHandle)
+        GLFW.glfwDestroyWindow(windowHandle)
 
         // Terminate GLFW and free the error callback
         GLFW.glfwTerminate()
         GLFW.glfwSetErrorCallback(null)!!.free()
     }
 
-    private fun init() {
-
+    private fun setCallBacks() {
         // Setup an error callback. The default implementation
         // will print the error message in System.err.
         GLFWErrorCallback.createPrint(System.err).set()
 
+        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
+        GLFW.glfwSetKeyCallback(windowHandle) { window: Long, key: Int, scancode: Int, action: Int, mods: Int ->
+            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) GLFW.glfwSetWindowShouldClose(
+                    window,
+                    true
+            ) // We will detect this in the rendering loop
+        }
+
+        GLFW.glfwSetWindowSizeCallback(windowHandle){
+         A: Long, x: Int, y: Int ->
+       // println("A: $A x: $x y:$y")
+            janelaFractal.setDimensaoDaJanelaDeSaida(CoordenadasTela(x.toDouble(),y.toDouble()))
+
+        }
+    }
+
+    private fun initOpenGLWindow() {
         // Initialize GLFW. Most GLFW functions will not work before doing this.
-        check(GLFW.glfwInit()) { "Unable to initialize GLFW" }
+        check(GLFW.glfwInit()) { throw RuntimeException("Unable to initialize GLFW") }
+
+        val resolucaoDesktop = getDesktopResolution()
 
         // Configure GLFW
         GLFW.glfwDefaultWindowHints() // optional, the current window hints are already the default
-        GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE) // the window will stay hidden after creation
+        GLFW.glfwWindowHint(GLFW.GLFW_VISIBLE, GLFW.GLFW_FALSE) // the window will stay hidden right after creation
         GLFW.glfwWindowHint(GLFW.GLFW_RESIZABLE, GLFW.GLFW_TRUE) // the window will be resizable
 
+
         // Create the window
-        window = GLFW.glfwCreateWindow(largura.toInt(), altura.toInt(), "Hello World!", MemoryUtil.NULL, MemoryUtil.NULL)
-        if (window == MemoryUtil.NULL) throw RuntimeException("Failed to create the GLFW window")
+        windowHandle = GLFW.glfwCreateWindow(resolucaoDesktop.x/2.toInt(), resolucaoDesktop.y/2.toInt(), "Mandelbrot Set!", MemoryUtil.NULL, MemoryUtil.NULL)
+        if (windowHandle == MemoryUtil.NULL) throw RuntimeException("Failed to create the GLFW window")
 
-        // Setup a key callback. It will be called every time a key is pressed, repeated or released.
-        GLFW.glfwSetKeyCallback(
-            window
-        ) { window: Long, key: Int, scancode: Int, action: Int, mods: Int ->
-            if (key == GLFW.GLFW_KEY_ESCAPE && action == GLFW.GLFW_RELEASE) GLFW.glfwSetWindowShouldClose(
-                window,
-                true
-            ) // We will detect this in the rendering loop
-        }
-        MemoryStack.stackPush().use { stack ->
-            val pWidth = stack.mallocInt(1) // int*
-            val pHeight = stack.mallocInt(1) // int*
+        val tamJanela = getOGLWindowResolution(windowHandle)
 
-            // Get the window size passed to glfwCreateWindow
-            GLFW.glfwGetWindowSize(window, pWidth, pHeight)
+        // Center the window
+        GLFW.glfwSetWindowPos(
+                windowHandle,
+                (resolucaoDesktop.x - tamJanela.x) / 2,
+                (resolucaoDesktop.y - tamJanela.y) / 2
+        )
 
-            // Get the resolution of the primary monitor
-            val vidmode = GLFW.glfwGetVideoMode(GLFW.glfwGetPrimaryMonitor())
-
-            // Center the window
-            GLFW.glfwSetWindowPos(
-                window,
-                (vidmode!!.width() - pWidth[0]) / 2,
-                (vidmode.height() - pHeight[0]) / 2
-            )
-        }
+        janelaFractal.setDimensaoDaJanelaDeSaida(CoordenadasTela(tamJanela.x.toDouble(),tamJanela.y.toDouble()))
 
         // Make the OpenGL context current
-        GLFW.glfwMakeContextCurrent(window)
+        GLFW.glfwMakeContextCurrent(windowHandle)
         // Enable v-sync
         GLFW.glfwSwapInterval(1)
 
         // Make the window visible
-        GLFW.glfwShowWindow(window)
-
-
+        GLFW.glfwShowWindow(windowHandle)
 
         GL.createCapabilities()
-        /* */
 
+        OGL.glClearColor(0.5f, 0.9f, 0.5f, 0.5f);
+    }
 
+    private fun initOpenGlProgram() {
         myGlProgram = MyGLProgramPC(
                 "src/shaders/TextureWrapperVertex.glsl",
                 "src/shaders/RawTextureFragment.glsl"
         )
-        // Set the background clear color to gray.
-        OGL.glClearColor(0.5f, 0.5f, 0.5f, 0.5f);
-
         mProgramHandle = myGlProgram.getProgramHandle()
+        OGL.glUseProgram(mProgramHandle)
+    }
+
+    private fun configureUniforms() {
         handlePosicaoVertices = OGL.glGetAttribLocation(mProgramHandle, "a_RectangleVertices");
         mWindowSizeUniformHandle = OGL.glGetUniformLocation(mProgramHandle, "u_WindowSize");
         handlePosicaoCelulas = OGL.glGetUniformLocation(mProgramHandle, "u_SpritePosition")
         handleEscalaDaPaleta = OGL.glGetUniformLocation(mProgramHandle, "u_escalaPaleta")
         handleTempo = OGL.glGetUniformLocation(mProgramHandle, "u_tempo")
-        mIteracoesTexBufferUniformHandle =  OGL.glGetUniformLocation(mProgramHandle, "u_Iteracoes")
-        mPaletaTexBufferUniformHandle =  OGL.glGetUniformLocation(mProgramHandle, "u_Paleta")
-
-
-        // Tell OpenGL to use this program when rendering.
-        OGL.glUseProgram(myGlProgram.getProgramHandle());
+        mIteracoesTexBufferUniformHandle = OGL.glGetUniformLocation(mProgramHandle, "u_Iteracoes")
+        mPaletaTexBufferUniformHandle = OGL.glGetUniformLocation(mProgramHandle, "u_Paleta")
+        mDimSpriteUniformHandle = OGL.glGetUniformLocation(mProgramHandle, "u_dimSprite")
 
         OGL.glUniform1i(mIteracoesTexBufferUniformHandle, 3);
         OGL.glUniform1i(mPaletaTexBufferUniformHandle, 4);
-
-        val threadProcessamento = List<ThreadProcessamento>(12){ ThreadProcessamento(janela) }
-        threadProcessamento.forEach{it.start()}
+        OGL.glUniform2i(mDimSpriteUniformHandle, janelaFractal.tamSprite.x, janelaFractal.tamSprite.y)
+        OGL.glUniform2f(mWindowSizeUniformHandle, largura.toFloat(), altura.toFloat())
     }
 
     private fun loop() {
-        // This line is critical for LWJGL's interoperation with GLFW's
-        // OpenGL context, or any context that is managed externally.
-        // LWJGL detects the context that is current in the current thread,
-        // creates the GLCapabilities instance and makes the OpenGL
-        // bindings available for use.
-        GL.createCapabilities()
+        OGL.glClear(OGL.GL_COLOR_BUFFER_BIT or OGL.GL_DEPTH_BUFFER_BIT) // clear the framebuffer
 
+        desenhar()
 
-        // Run the rendering loop until the user has attempted to close
-        // the window or has pressed the ESCAPE key.
-        while (!GLFW.glfwWindowShouldClose(window)) {
-            OGL.glClear(OGL.GL_COLOR_BUFFER_BIT or OGL.GL_DEPTH_BUFFER_BIT) // clear the framebuffer
+        GLFW.glfwSwapBuffers(windowHandle) // swap the color buffers
 
-            desenhar()
-
-            GLFW.glfwSwapBuffers(window) // swap the color buffers
-
-            // Poll for window events. The key callback above will only be
-            // invoked during this call.
-            GLFW.glfwPollEvents()
-        }
+        GLFW.glfwPollEvents()
     }
 
-    fun desenhar(){
-        OGL.glUniform2f(mWindowSizeUniformHandle,largura,altura)
-
-
-        janela.let { janela ->
-            val tempoinicio = janela.relogio.getCurrentTimeMs()
+    private fun desenhar() {
+        janelaFractal.let { janela ->
+            val tempoInicio = janela.relogio.getCurrentTimeMs()
 
             if (janela.ExibirInformacoesDaJanelaEmOverlay) atualizarTexto();
             //janela.setDimensaoDaJanelaDeSaida(  CoordenadasTela(   largura.toDouble(),     altura.toDouble()   )            )
@@ -171,7 +171,7 @@ class HelloWordWindow : DesenhistaDeCelulas() {
             //janela.TarefasDesalocarTextura.executarPrimeira()
             //janela.TarefasAlocarTextura.executarPrimeira()
             //  tempoinicio = SystemClock.uptimeMillis()
-            while (janela.relogio.getCurrentTimeMs() - tempoinicio < 15) {
+            while (janela.relogio.getCurrentTimeMs() - tempoInicio < 15) {
                 janela.TarefasDesalocarTextura.executarPrimeira()
                 janela.TarefasAlocarTextura.executarPrimeira()
             }
@@ -180,32 +180,20 @@ class HelloWordWindow : DesenhistaDeCelulas() {
 
     private fun atualizarTexto() {
         textoDebug.clear()
-        val coordenadasTela = CoordenadasTela(XX.toDouble(), YY.toDouble())
+        val coordenadasTela = CoordenadasTela(largura.toDouble(), altura.toDouble())
         coordenadasTela.x -= largura / 2
         coordenadasTela.y -= altura / 2
-        janela?.let {
+        janelaFractal.let {
             textoDebug.append("\nTouch " + coordenadasTela.toString())
             textoDebug.append("\nPlano " + it.getCoordenadasPlano(coordenadasTela))
             textoDebug.append("\n" + it.toString())
         }
-     //   ouvinte?.recieveText(textoDebug.toString())
-
-        /* Thread(Runnable {
-          ouvinte?.recieveText(textoDebug.toString())
-
-      }).start()*/
     }
 
     companion object {
         @JvmStatic
         fun main(args: Array<String>) {
-            HelloWordWindow().run()
-        }
-
-        private var textureHandle = IntArray(1) { 0 }
-
-        fun bindTexture() {
-            OGL.glBindTexture(OGL.GL_TEXTURE_2D, textureHandle[0])
+            HelloWordWindow()
         }
     }
 }
