@@ -3,7 +3,7 @@ package com.example.fractal.windows
 import com.example.fractal.TipoArrayIteracoes
 import org.lwjgl.opengl.GL32
 
-import com.example.fractal.TextureWrapper
+import com.example.fractal.interfaces.TextureWrapper
 import com.example.fractal.TipoCor
 import com.example.fractal.dummyTexture
 import java.lang.Math.sin
@@ -11,7 +11,7 @@ import java.nio.ByteBuffer
 import java.nio.ByteOrder
 
 /**x e y da funcao drawer deve ir de -0.5 até 0.5*/
-class MGlTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
+class MGlTextureWrapper(val largura:Int, val altura:Int): TextureWrapper {
 
     var possuiTexturaValida = false;
     var jadestruiu = false

@@ -1,6 +1,7 @@
 package com.example.fractal
 
 
+import com.example.fractal.interfaces.TextureWrapper
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.math.ln
 

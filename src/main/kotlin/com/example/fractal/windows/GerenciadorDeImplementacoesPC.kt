@@ -1,12 +1,14 @@
 package com.example.fractal.windows
 
 import com.example.fractal.*
-import com.example.fractal.Relogio
+import com.example.fractal.interfaces.GerenciadorDeImplementacoes
+import com.example.fractal.interfaces.Relogio
+import com.example.fractal.interfaces.TextureWrapper
 
 class GerenciadorDeImplementacoesPC : GerenciadorDeImplementacoes {
     override fun relogio(): Relogio = com.example.fractal.windows.Relogio()
 
-    override fun texture(): TextureWrapper{
+    override fun texture(): TextureWrapper {
         TODO("Not yet implemented") //TextureWrapper = MGlTextureWrapper()
     }
 

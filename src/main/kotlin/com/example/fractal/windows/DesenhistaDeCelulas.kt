@@ -5,7 +5,7 @@ import org.lwjgl.opengl.GL32 as OGL
 import java.nio.ByteBuffer.allocateDirect
 import java.nio.ByteOrder
 import java.nio.FloatBuffer
-import com.example.fractal.DesenhistaDeCelulas
+import com.example.fractal.interfaces.DesenhistaDeCelulas
 
 
 /** Invoca o GLELS20 e desenha um retângulo na tela, correspondente a uma célula*/

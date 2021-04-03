@@ -3,12 +3,12 @@ package com.example.fractal.windows
 import com.example.fractal.TipoArrayIteracoes
 import org.lwjgl.opengl.GL32
 
-import com.example.fractal.TextureWrapper
+import com.example.fractal.interfaces.TextureWrapper
 import com.example.fractal.TipoCor
 import com.example.fractal.dummyTexture
 
 /**x e y da funcao drawer deve ir de -0.5 até 0.5*/
-class MGlBufferTextureWrapper(val largura:Int, val altura:Int):TextureWrapper {
+class MGlBufferTextureWrapper(val largura:Int, val altura:Int): TextureWrapper {
 
     private var possuiTexturaValida = false;
     private var jadestruiu = false

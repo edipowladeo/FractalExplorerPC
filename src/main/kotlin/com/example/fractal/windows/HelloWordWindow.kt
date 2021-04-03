@@ -167,6 +167,8 @@ class HelloWordWindow : DesenhistaDeCelulas() {
             //janela.TarefasDesalocarTextura.executarPrimeira()
             //janela.TarefasAlocarTextura.executarPrimeira()
             //  tempoinicio = SystemClock.uptimeMillis()
+
+            //Tarefas que envolvem OpenGL devem executar na mesma TrheadOpenGL
             while (janela.relogio.getCurrentTimeMs() - tempoInicio < 15) {
                 janela.tarefasDesalocarTextura.executarPrimeira()
                 janela.tarefasAlocarTextura.executarPrimeira()

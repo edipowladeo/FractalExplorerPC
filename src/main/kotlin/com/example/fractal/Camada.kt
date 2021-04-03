@@ -93,7 +93,7 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
             if (coordCelulasY.first().coordenadaPlano < retanguloDesalocar.min.y) removerLinha(Posicao.ULTIMA)
             if (coordCelulasY.last().coordenadaPlano > retanguloDesalocar.max.y)  removerLinha(Posicao.PRIMEIRA)
         }
-        println("qdte celulas x: ${coordCelulasX.size} y: ${coordCelulasY.size}")
+    //    println("qdte celulas x: ${coordCelulasX.size} y: ${coordCelulasY.size}")
     }
 
     fun getCoordenadasPlanoCelulaCantoSupEsq(): CoordenadasPlano {
@@ -154,7 +154,6 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
     //TODO: Adicionar Coluna e linha não seta coordenadas tela dos vetores, eles ficam em zero durante um frame
     //TODO: refatorar nomes
     private fun adicionarColuna(posicao: Posicao){
-        println("adicionou")
         val tamX = coordCelulasX.size
 
         val indiceX = if (posicao == Posicao.PRIMEIRA) (tamX) else (0)
@@ -208,7 +207,6 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
 
 
     private fun removerColuna(posicao: Posicao){
-        println("removeu")
         val tamX = coordCelulasX.size
 
         val indiceX = if (posicao== Posicao.PRIMEIRA)  (tamX-1) else (0)

@@ -14,7 +14,7 @@ java.util.ConcurrentModificationException
 at java.util.TreeMap$PrivateEntryIterator.nextEntry(TreeMap.java:1212)
 at java.util.TreeMap$ValueIterator.next(TreeMap.java:1257)
 at com.example.fractal.Janela.executaTarefaDeProcessamentoComMaiorPrioridade(Janela.kt:239)
-at com.example.fractal.android.ThreadProcessamento.run(ThreadProcessamento.kt:19)*/
+at com.example.fractal.threads.ThreadProcessamento.run(ThreadProcessamento.kt:19)*/
 //TODO:Navegacao da camera com "mola" até local de interesse
 //TODO:implementar celulas "intativas"
 

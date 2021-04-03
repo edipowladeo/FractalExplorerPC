@@ -1,5 +1,7 @@
 package com.example.fractal
 
+import com.example.fractal.interfaces.TextureWrapper
+
 
 /** um objeto Tarefa deve possuir todas as informacoes para que a tarefa seja executada*/
 
