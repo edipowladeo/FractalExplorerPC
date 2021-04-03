@@ -134,7 +134,6 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
                 }
             }
         }
-        lock.unlock()
     }
 
     fun executaTarefaDeProcessamentoComMaiorPrioridade():Boolean{
@@ -174,7 +173,7 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
         /** Todas as novas camadas são alinahdas a maior camada*/
         var CoordenadasNovasCamadas = CoordenadasPlano(-0.0,-0.0)
         camadas.values.firstOrNull()?.let {
-            CoordenadasNovasCamadas = it.getCoordenadasPlano()
+            CoordenadasNovasCamadas = it.getCoordenadasPlanoCelulaCantoSupEsq()
         }
 
         //TODO:Substituir por comparação direta com o range

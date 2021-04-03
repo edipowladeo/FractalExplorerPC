@@ -1,9 +1,5 @@
 package com.example.fractal
 
-import com.example.fractal.GerenciadorDeTarefas
-import com.example.fractal.Janela
-import com.example.fractal.TarefaProcessamento
-
 
 /**
 Os vetores coordCelulasX(CX) e Os coordCelulasY(CY) armazendam as coordenadas no plano e na tela das células (c)
@@ -105,7 +101,7 @@ class Camada(val janela: Janela, coordenadasIniciais: CoordenadasPlanoEDelta)
         }
     }
 
-    fun getCoordenadasPlano(): CoordenadasPlano {
+    fun getCoordenadasPlanoCelulaCantoSupEsq(): CoordenadasPlano {
         return CoordenadasPlano(
             coordCelulasX.first().coordenadaPlano,
             coordCelulasY.first().coordenadaPlano
@@ -113,13 +109,13 @@ class Camada(val janela: Janela, coordenadasIniciais: CoordenadasPlanoEDelta)
     }
 
     fun getCoordenadasPlanoEDelta(): CoordenadasPlanoEDelta {
-        return CoordenadasPlanoEDelta(getCoordenadasPlano(),Delta)
+        return CoordenadasPlanoEDelta(getCoordenadasPlanoCelulaCantoSupEsq(),Delta)
     }
 
     fun PosicionaCamadaNaTela() {
         lateinit var coordenadasTela : CoordenadasTela
 
-        val coordenadasPlano = getCoordenadasPlano()
+        val coordenadasPlano = getCoordenadasPlanoCelulaCantoSupEsq()
         janela.PosicaoCameraAtual.also {
             coordenadasTela = CoordenadasTela(
                 (coordenadasPlano.x - it.x) / it.Delta,

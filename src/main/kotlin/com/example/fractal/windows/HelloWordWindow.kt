@@ -78,8 +78,12 @@ class HelloWordWindow : DesenhistaDeCelulas() {
 
         GLFW.glfwSetWindowSizeCallback(windowHandle){
          A: Long, x: Int, y: Int ->
-       // println("A: $A x: $x y:$y")
+            // println("A: $A x: $x y:$y")
+            largura = x
+            altura = y
+            OGL.glUniform2f(mWindowSizeUniformHandle, largura.toFloat(), altura.toFloat())
             janelaFractal.setDimensaoDaJanelaDeSaida(CoordenadasTela(x.toDouble(),y.toDouble()))
+            OGL.glViewport(0,0,largura,altura)
 
         }
     }

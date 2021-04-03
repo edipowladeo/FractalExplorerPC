@@ -15,6 +15,8 @@ class Celula(val camada: Camada, val coordenadasPlano: CoordenadasPlano, val tam
 
     //TODO: Decidir se vai usar sprite como membro ou como herança, ou se sequer deve existir a classe sprite
     //var sprite: Sprite = Sprite(tamTextura.x, tamTextura.y,camada.janela.texturaPlaceholder)
+
+    //pixels: Origem no centro da tela
     var coordenadasTela = Cvetor2d()
 
     var iteracoes = camada.janela.poolArrayIteracoes.borrowObject()
