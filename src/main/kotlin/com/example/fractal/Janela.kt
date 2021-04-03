@@ -84,6 +84,7 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
   //      var dimensaoold = dimensaoJanelaSaida
         dimensaoJanelaSaida = dimensao
 
+
        // println("Janela Redimensioanda $dimensaoJanelaSaida")
     }
 
@@ -127,6 +128,7 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
             camada.Celulas.forEachIndexed { i, colunas ->
                 colunas.forEachIndexed() { j, linhas ->
                     linhas.run {
+                        this.coordenadasTela =   Cvetor2d(0.0,-0.0)
                         if (this.possuiTexturaValida()) {
                           if (this.matrizIteracoesEstaCalculada)  desenhista.desenharCelula(this,escala.toFloat())
                         }
