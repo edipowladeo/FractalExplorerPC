@@ -17,7 +17,10 @@ import kotlin.math.pow
  * lock nas camadas caso queira criar thread exclusiva de adicionar/remover ,
  * somente caso esteja muito lento (profiling) seria a ultima coisa a fazer
   */
-class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : JanelaPropriedades() {
+class Janela(
+        val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes,
+        private var dimensaoJanelaSaida: CoordenadasTela
+) : JanelaPropriedades() {
     val lock = ReentrantLock()
 
     private var paleta: Paleta
@@ -31,7 +34,6 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
 
     /**VARIAVEIS DE ESTADO vars*/
     //TODO: injeção de dependencia não tá funcionando legal
-    private var dimensaoJanelaSaida = CoordenadasTela(100.0, 100.0)
 
     //var camadasDesejadas = 7..7 // passei para local no metodo adicionarRemoverCamadas
     var PosicaoCameraAtual = PosicaoCameraInicial
@@ -128,7 +130,6 @@ class Janela(val gerenciadorDeImplementacoes: GerenciadorDeImplementacoes) : Jan
             camada.Celulas.forEachIndexed { i, colunas ->
                 colunas.forEachIndexed() { j, linhas ->
                     linhas.run {
-                        this.coordenadasTela =   Cvetor2d(0.0,-0.0)
                         if (this.possuiTexturaValida()) {
                           if (this.matrizIteracoesEstaCalculada)  desenhista.desenharCelula(this,escala.toFloat())
                         }

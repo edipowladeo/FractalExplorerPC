@@ -15,18 +15,16 @@ import org.lwjgl.system.MemoryUtil
 
 
 class HelloWordWindow : DesenhistaDeCelulas() {
+    private var dimensoesJanela = CoordenadasTela(800.0,600.0)
 
     private var windowHandle: WindowHandle = 0
 
-    private val janelaFractal = Janela(GerenciadorDeImplementacoesPC())
-
-    private val reducao = 2
-
-    private var largura: Int = 3840 / reducao
-    private var altura: Int = 2000 / reducao
+    private val janelaFractal = Janela(
+            GerenciadorDeImplementacoesPC(),
+            dimensoesJanela
+    )
 
     private val textoDebug = StringBuilder()
-
 
     private lateinit var myGlProgram: MyGLProgramPC
     private var mProgramHandle: UniformHandle = 0
@@ -36,7 +34,6 @@ class HelloWordWindow : DesenhistaDeCelulas() {
     private var mDimSpriteUniformHandle: UniformHandle = 0
 
     init{
-
         run()
     }
 
@@ -79,11 +76,10 @@ class HelloWordWindow : DesenhistaDeCelulas() {
         GLFW.glfwSetWindowSizeCallback(windowHandle){
          A: Long, x: Int, y: Int ->
             // println("A: $A x: $x y:$y")
-            largura = x
-            altura = y
-            OGL.glUniform2f(mWindowSizeUniformHandle, largura.toFloat(), altura.toFloat())
+            dimensoesJanela = CoordenadasTela(x,y)
+            OGL.glUniform2f(mWindowSizeUniformHandle, x.toFloat(), y.toFloat())
             janelaFractal.setDimensaoDaJanelaDeSaida(CoordenadasTela(x.toDouble(),y.toDouble()))
-            OGL.glViewport(0,0,largura,altura)
+            OGL.glViewport(0,0,x,y)
 
         }
     }
@@ -101,7 +97,7 @@ class HelloWordWindow : DesenhistaDeCelulas() {
 
 
         // Create the window
-        windowHandle = GLFW.glfwCreateWindow(resolucaoDesktop.x/2.toInt(), resolucaoDesktop.y/2.toInt(), "Mandelbrot Set!", MemoryUtil.NULL, MemoryUtil.NULL)
+        windowHandle = GLFW.glfwCreateWindow(dimensoesJanela.x.toInt(), dimensoesJanela.y.toInt(), "Mandelbrot Set!", MemoryUtil.NULL, MemoryUtil.NULL)
         if (windowHandle == MemoryUtil.NULL) throw RuntimeException("Failed to create the GLFW window")
 
         val tamJanela = getOGLWindowResolution(windowHandle)
@@ -150,7 +146,7 @@ class HelloWordWindow : DesenhistaDeCelulas() {
         OGL.glUniform1i(mIteracoesTexBufferUniformHandle, 3);
         OGL.glUniform1i(mPaletaTexBufferUniformHandle, 4);
         OGL.glUniform2i(mDimSpriteUniformHandle, janelaFractal.tamSprite.x, janelaFractal.tamSprite.y)
-        OGL.glUniform2f(mWindowSizeUniformHandle, largura.toFloat(), altura.toFloat())
+        OGL.glUniform2f(mWindowSizeUniformHandle, dimensoesJanela.x.toFloat(), dimensoesJanela.y.toFloat())
     }
 
     private fun loop() {
@@ -184,9 +180,9 @@ class HelloWordWindow : DesenhistaDeCelulas() {
 
     private fun atualizarTexto() {
         textoDebug.clear()
-        val coordenadasTela = CoordenadasTela(largura.toDouble(), altura.toDouble())
-        coordenadasTela.x -= largura / 2
-        coordenadasTela.y -= altura / 2
+        val coordenadasTela = dimensoesJanela
+        coordenadasTela.x -= dimensoesJanela.x / 2
+        coordenadasTela.y -= dimensoesJanela.y / 2
         janelaFractal.let {
             textoDebug.append("\nTouch " + coordenadasTela.toString())
             textoDebug.append("\nPlano " + it.getCoordenadasPlano(coordenadasTela))

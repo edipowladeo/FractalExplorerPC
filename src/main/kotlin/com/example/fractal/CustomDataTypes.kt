@@ -90,10 +90,18 @@ open class Cvetor2d{
         x=X
         y=Y
     }
+    constructor(X:Int,Y:Int){
+        x=X.toDouble()
+        y=Y.toDouble()
+    }
     constructor(){}
     constructor(C: Cvetor2d){
         x = C.x
         y = C.y
+    }
+    constructor(C: Cvetor2i){
+        x = C.x.toDouble()
+        y = C.y.toDouble()
     }
 
     override fun toString(): String {
