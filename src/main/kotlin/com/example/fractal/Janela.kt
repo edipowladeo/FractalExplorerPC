@@ -1,7 +1,6 @@
 package com.example.fractal
 
 import com.example.fractal.android.ThreadProcessamento
-import com.example.fractal.windows.ThreadManipularJanelas
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
 import kotlin.math.log
@@ -48,7 +47,7 @@ class Janela(
     val tarefasAlocarTextura = GerenciadorDeTarefas<TarefaCriarTexturaGL>()
 
     private val threadsProcessamento = List(12) { ThreadProcessamento(this) }
-    private val threadManipularJanelas = ThreadManipularJanelas(this)
+//    private val threadManipularJanelas = ThreadManipularJanelas(this)
 
     /** key da camada é o valor de magnificação*/
     /** quanto maior, menor é o tamanho aparente da camada e portanto maior resolução  qualidade aparente */
@@ -60,7 +59,7 @@ class Janela(
         tarefasAlocarTextura.add(TarefaCriarTexturaGL(texturaPlaceholder))
         atualizaCameraECamadas()
 
-        threadManipularJanelas.start()
+     //   threadManipularJanelas.start()
         threadsProcessamento.forEach { it.start() }
         //TODO: Cria thread, porém se o objeto janela sai de escopo, thread fica solta
     }
@@ -79,7 +78,7 @@ class Janela(
 
     fun setDimensaoDaJanelaDeSaida(dimensao: CoordenadasTela) {
         //      var dimensaoold = dimensaoJanelaSaida
-        dimensaoJanelaSaida = dimensao
+        dimensaoJanelaSaida = CoordenadasTela(dimensao)
 
 
         // println("Janela Redimensioanda $dimensaoJanelaSaida")
@@ -104,6 +103,7 @@ class Janela(
 
     fun desenharCelulas(desenhista: DesenhistaDeCelulas) {
         lock.lock()
+        atualizaCameraECamadas()
 //todo :definir um ciclo temporal consistente
         val time = relogio.getCurrentTimeMs() % 10240L
         // val angleInRad = 6.28318530f / 10000.0f * time.toFloat() * velocidadeCircularCores
@@ -111,8 +111,8 @@ class Janela(
         paleta.bind()
         camadas.values.forEach { camada ->
             camada.posicionaTodasCelulasNaTela()
-            val escala = camada.Delta * tamSprite.x / cameraAtual.Delta
-            camada.Celulas.forEachIndexed { i, colunas ->
+            val escala = camada.delta * tamSprite.x / cameraAtual.Delta
+            camada.celulas.forEachIndexed { i, colunas ->
                 colunas.forEachIndexed() { j, linhas ->
                     linhas.run {
                         if (this.possuiTexturaValida()) {
@@ -148,7 +148,7 @@ class Janela(
         janelaDesenho.x = -janelaDesenho.x
         janelaDesenho.y = -janelaDesenho.y
         regiaoDesenhoPlano.min = janelaDesenho.toCoordenadasPlano(cameraAtual)
-        //    println("coord max $coord_max coord min $coord_min")
+
     }
 
     private fun adicionarRemoverCamadas() {

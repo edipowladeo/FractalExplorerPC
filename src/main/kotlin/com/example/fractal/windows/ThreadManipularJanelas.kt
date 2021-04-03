@@ -9,9 +9,11 @@ class ThreadManipularJanelas(val janela: Janela):Thread() {
             while (true) {
                 janela.atualizaCameraECamadas();
                 //     Log.i("thread manipular janelas", "running")
+                println("thread manipular janelas running")
             }
-        } catch (e: InterruptedException) {
+        } catch (e: Throwable) {
             e.printStackTrace()
+            println("exception $e")
         }
     }
 }

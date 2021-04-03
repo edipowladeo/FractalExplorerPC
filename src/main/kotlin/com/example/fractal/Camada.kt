@@ -37,7 +37,7 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
             coordenadaPlano = CoordenadaPlano
         }
     }
-    enum class Direcao {
+    enum class Posicao {
         PRIMEIRA, ULTIMA
     }
     /**lista de tarefas*/
@@ -47,12 +47,13 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
     private var coordCelulasX = MutableList<CoordCelula1D>(1){ CoordCelula1D(coordenadasIniciais.x) }
     private var coordCelulasY = MutableList<CoordCelula1D>(1){ CoordCelula1D(coordenadasIniciais.y) }
 
-    internal val Delta: TipoDelta = coordenadasIniciais.Delta
+    internal val delta: TipoDelta = coordenadasIniciais.Delta
 
     /**Lista (colunas) de lista (linhas) de células*/
-    internal var Celulas = MutableList<MutableList<Celula>>(1){MutableList(1){
-        Celula(this,coordenadasIniciais,janela.tamSprite)
-    }
+    internal var celulas = MutableList<MutableList<Celula>>(1){
+        MutableList(1){
+            Celula(this,coordenadasIniciais,janela.tamSprite)
+        }
     }
 
     init{
@@ -63,8 +64,8 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
         // presume-se que os valores minimos e maximos da janela estão atualizados
         //TODO:usar tipos e operator overload para melhorar a redabilidade
         val tamSpriteNoPlano = CoordenadasPlano(
-            janela.tamSprite.x.toDouble() * Delta,
-            janela.tamSprite.y.toDouble() * Delta
+            janela.tamSprite.x.toDouble() * delta,
+            janela.tamSprite.y.toDouble() * delta
         )
 
         val retanguloAlocar = RetanguloPlano(janela.regiaoDesenhoPlano).apply{
@@ -78,21 +79,21 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
         }
 
         //Aloca todas linhas/colunas por chamada
-        while (coordCelulasX.first().coordenadaPlano > retanguloAlocar.min.x) adicionarColuna(Direcao.ULTIMA)
-        while (coordCelulasX.last() .coordenadaPlano < retanguloAlocar.max.x) adicionarColuna(Direcao.PRIMEIRA)
-        while (coordCelulasY.first().coordenadaPlano > retanguloAlocar.min.y) adicionarLinha (Direcao.ULTIMA)
-        while (coordCelulasY.last() .coordenadaPlano < retanguloAlocar.max.y) adicionarLinha (Direcao.PRIMEIRA)
+        while (coordCelulasX.first().coordenadaPlano > retanguloAlocar.min.x) adicionarColuna(Posicao.ULTIMA)
+        while (coordCelulasX.last() .coordenadaPlano < retanguloAlocar.max.x) adicionarColuna(Posicao.PRIMEIRA)
+        while (coordCelulasY.first().coordenadaPlano > retanguloAlocar.min.y) adicionarLinha (Posicao.ULTIMA)
+        while (coordCelulasY.last() .coordenadaPlano < retanguloAlocar.max.y) adicionarLinha (Posicao.PRIMEIRA)
 
         //Desaloca apenas uma linha/coluna por chamada
         if (coordCelulasX.size > 1){
-            if (coordCelulasX.first().coordenadaPlano < retanguloDesalocar.min.x) removerColuna(Direcao.ULTIMA)
-            if (coordCelulasX.last().coordenadaPlano > retanguloDesalocar.max.x)  removerColuna(Direcao.PRIMEIRA)
+            if (coordCelulasX.first().coordenadaPlano < retanguloDesalocar.min.x) removerColuna(Posicao.ULTIMA)
+            if (coordCelulasX.last().coordenadaPlano > retanguloDesalocar.max.x)  removerColuna(Posicao.PRIMEIRA)
         }
         if (coordCelulasY.size > 1){
-            if (coordCelulasY.first().coordenadaPlano < retanguloDesalocar.min.y) removerLinha(Direcao.ULTIMA)
-            if (coordCelulasY.last().coordenadaPlano > retanguloDesalocar.max.y)  removerLinha(Direcao.PRIMEIRA)
+            if (coordCelulasY.first().coordenadaPlano < retanguloDesalocar.min.y) removerLinha(Posicao.ULTIMA)
+            if (coordCelulasY.last().coordenadaPlano > retanguloDesalocar.max.y)  removerLinha(Posicao.PRIMEIRA)
         }
-
+        println("qdte celulas x: ${coordCelulasX.size} y: ${coordCelulasY.size}")
     }
 
     fun getCoordenadasPlanoCelulaCantoSupEsq(): CoordenadasPlano {
@@ -102,11 +103,11 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
         )
     }
 
-    fun getCoordenadasPlanoEDelta(): PosicaoCamera {
-        return PosicaoCamera(getCoordenadasPlanoCelulaCantoSupEsq(),Delta)
+    fun getPosicaoCamera(): PosicaoCamera {
+        return PosicaoCamera(getCoordenadasPlanoCelulaCantoSupEsq(),delta)
     }
 
-    fun PosicionaCamadaNaTela() {
+    private fun posicionaCamadaNaTela() {
         lateinit var coordenadasTela : CoordenadasTela
 
         val coordenadasPlano = getCoordenadasPlanoCelulaCantoSupEsq()
@@ -116,14 +117,14 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
                 (coordenadasPlano.y - it.y) / it.Delta)
         }
 
-        val razao = Delta / janela.cameraAtual.Delta
+        val razao = delta / janela.cameraAtual.Delta
         coordCelulasX.forEachIndexed{i,it->
             it.coordenadaTela=coordenadasTela.x + i*razao * janela.tamSprite.x}
         coordCelulasY.forEachIndexed{j,it->
             it.coordenadaTela=coordenadasTela.y + j*razao * janela.tamSprite.y}
     }
 
-    fun getCoordenadaTelaDaCelula(i:Int,j:Int): CoordenadasTela {
+    private fun getCoordenadaTelaDaCelula(i:Int, j:Int): CoordenadasTela {
         return  CoordenadasTela(
             coordCelulasX[i].coordenadaTela,
             coordCelulasY[j].coordenadaTela)
@@ -131,8 +132,8 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
 
     //TODO: verificar se é melhor usar este método na camada toda ou chamar o método getCoordenadaTelaDaCelula na hora de renderizar
     fun posicionaTodasCelulasNaTela(){
-        PosicionaCamadaNaTela()
-        Celulas.forEachIndexed{i,colunas ->
+        posicionaCamadaNaTela()
+        celulas.forEachIndexed{ i, colunas ->
             colunas.forEachIndexed{j,linhas ->
                 linhas.coordenadasTela = getCoordenadaTelaDaCelula(i,j)
             }
@@ -140,7 +141,7 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
     }
 
     fun logCells(){
-        Celulas.forEachIndexed{i,it ->
+        celulas.forEachIndexed{ i, it ->
             ////Log.i("Debug","x: "+i.toString())
             it.forEachIndexed{j,it ->
                 ////Log.i("Debug","y: "+ j.toString())
@@ -152,17 +153,16 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
 
     //TODO: Adicionar Coluna e linha não seta coordenadas tela dos vetores, eles ficam em zero durante um frame
     //TODO: refatorar nomes
-    fun adicionarColuna(direcao: Direcao){
+    private fun adicionarColuna(posicao: Posicao){
         println("adicionou")
-        val tamY = coordCelulasY.size
         val tamX = coordCelulasX.size
 
-        val indiceX = if (direcao== Direcao.PRIMEIRA)  tamX else 0
+        val indiceX = if (posicao == Posicao.PRIMEIRA) (tamX) else (0)
 
-        val novacoordenadaOffset = if (direcao== Direcao.PRIMEIRA) (tamX*Delta*janela.tamSprite.x) else (-Delta*janela.tamSprite.x)
+        val offset = if (posicao == Posicao.PRIMEIRA) (tamX*delta*janela.tamSprite.x) else (-delta*janela.tamSprite.x)
 
         /** incrementa o vetor de coordenadas */
-        val novaCoordenadaX = CoordCelula1D(coordCelulasX.first().coordenadaPlano + novacoordenadaOffset)
+        val novaCoordenadaX = CoordCelula1D(coordCelulasX.first().coordenadaPlano + offset)
         coordCelulasX.add(indiceX,novaCoordenadaX)
 
         /**cria uma nova coluna */
@@ -178,17 +178,16 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
         }
 
         /**Insere nova Coluna na matriz de células */
-        Celulas.add(indiceX,novaColuna)
+        celulas.add(indiceX,novaColuna)
     }
 
 
-    fun adicionarLinha(direcao: Direcao){
+    private fun adicionarLinha(posicao: Posicao){
         val tamY = coordCelulasY.size
-        val tamX = coordCelulasX.size
 
-        val indiceY = if (direcao== Direcao.PRIMEIRA)  tamY else 0
+        val indiceY = if (posicao== Posicao.PRIMEIRA) (tamY) else (0)
 
-        val novacoordenadaOffset = if (direcao== Direcao.PRIMEIRA) (tamY*Delta*janela.tamSprite.y) else (-Delta*janela.tamSprite.y)
+        val novacoordenadaOffset = if (posicao== Posicao.PRIMEIRA) (tamY*delta*janela.tamSprite.y) else (-delta*janela.tamSprite.y)
 
         /** incrementa o vetor de coordenadas */
         val novaCoordenadaY = CoordCelula1D(coordCelulasY.first().coordenadaPlano + novacoordenadaOffset)
@@ -203,52 +202,50 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
                     coordCelulasY[indiceY].coordenadaPlano
                 ),
                 janela.tamSprite)
-            Celulas[indiceX].add(indiceY,novaCelula)
+            celulas[indiceX].add(indiceY,novaCelula)
         }
     }
 
 
-    fun removerColuna(direcao: Direcao){
+    private fun removerColuna(posicao: Posicao){
         println("removeu")
-        val tamY = coordCelulasY.size
         val tamX = coordCelulasX.size
 
-        val indiceX = if (direcao== Direcao.PRIMEIRA)  tamX-1 else 0
+        val indiceX = if (posicao== Posicao.PRIMEIRA)  (tamX-1) else (0)
 
         /** remove Coordenadas do vetor*/
         coordCelulasX.removeAt(indiceX)
 
         /** liberar recursos das células*/
-        Celulas[indiceX].forEach {celula ->
+        celulas[indiceX].forEach { celula ->
             celula.liberaRecursos()
         }
 
         /** remove coluna*/
-        Celulas.removeAt(indiceX)
+        celulas.removeAt(indiceX)
     }
 
-    fun removerLinha(direcao: Direcao) {
+    private fun removerLinha(posicao: Posicao) {
         val tamY = coordCelulasY.size
-        val tamX = coordCelulasX.size
 
-        val indiceY = if (direcao == Direcao.PRIMEIRA) tamY - 1 else 0
+        val indiceY = if (posicao == Posicao.PRIMEIRA) (tamY - 1) else (0)
 
         /** remove Coordenadas do vetor*/
         coordCelulasY.removeAt(indiceY)
 
         /** liberar recursos das células*/
-        Celulas.forEach { linha ->
+        celulas.forEach { linha ->
             linha[indiceY].liberaRecursos()
         }
 
         /** remove linha*/
-        Celulas.forEach { linha ->
+        celulas.forEach { linha ->
             linha.removeAt(indiceY)
         }
     }
 
     fun liberarRecursos(){
-        Celulas.forEach { linha ->
+        celulas.forEach { linha ->
             linha.forEach{celula->
                 celula.liberaRecursos()
             }

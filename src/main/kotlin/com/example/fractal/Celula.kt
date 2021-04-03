@@ -64,7 +64,7 @@ class Celula(val camada: Camada, val coordenadasPlano: CoordenadasPlano, val tam
     }
 
     fun PopulateLocalArrayWithFractal() {
-        val delta = camada.Delta
+        val delta = camada.delta
         for (j in 0 until tamTextura.y) {
           for (i in 0 until tamTextura.x) {
                 val pidex = i + j * tamTextura.x
