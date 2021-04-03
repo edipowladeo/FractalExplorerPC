@@ -49,7 +49,9 @@ class Janela(
     val tarefasDesalocarTextura = GerenciadorDeTarefas<TarefaDesalocarTexturaGL>()
     val tarefasAlocarTextura = GerenciadorDeTarefas<TarefaCriarTexturaGL>()
 
-    private val threadsProcessamento = List(6) { ThreadProcessamento(this) }
+    //todo : interface
+    private val numThreadsProcessamento: Int = Runtime.getRuntime().availableProcessors() - 1;
+    private val threadsProcessamento = List(numThreadsProcessamento) { ThreadProcessamento(this) }
     private val threadManipularJanelas = ThreadManipularJanelas(this)
 
     /** key da camada é o valor de magnificação*/

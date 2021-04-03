@@ -5,7 +5,7 @@ import java.lang.Math.pow
 open class
 JanelaPropriedades {
     var ExibirInformacoesDaJanelaEmOverlay = false
-    val NumThreadsProcessamento = 4
+//    val NumThreadsProcessamento = 4
     val samplingIteracoes  = 64
 
     val escalaPaleta = samplingIteracoes*16f
