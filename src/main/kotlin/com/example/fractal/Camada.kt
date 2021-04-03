@@ -21,7 +21,7 @@ estes métodos manipulam e os vetores coordCelulas e a matriz de células ao mes
  */
 
 
-class Camada(val janela: Janela, coordenadasIniciais: CoordenadasPlanoEDelta)
+class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
 {
 
 //TODO: isto é realmente necessario? classe coordcelula1d, pode ser implementados dois vetores
@@ -66,20 +66,20 @@ class Camada(val janela: Janela, coordenadasIniciais: CoordenadasPlanoEDelta)
         var alturaPlano = janela.tamSprite.y.toDouble() * Delta
 
         val coord_min_alocar = CoordenadasPlano(
-            janela.coordMin.x,
-            janela.coordMin.y
+            janela.regiaoDesenhoPlano.min.x,
+            janela.regiaoDesenhoPlano.min.y
         )
         val coord_max_alocar = CoordenadasPlano(
-            janela.coordMax.x - larguraPlano,
-            janela.coordMax.y - alturaPlano
+            janela.regiaoDesenhoPlano.max.x - larguraPlano,
+            janela.regiaoDesenhoPlano.max.y - alturaPlano
         )
         val coord_min_desalocar = CoordenadasPlano(
-            janela.coordMin.x - larguraPlano,
-            janela.coordMin.y - alturaPlano
+            janela.regiaoDesenhoPlano.min.x - larguraPlano,
+            janela.regiaoDesenhoPlano.min.y - alturaPlano
         )
         val coord_max_desalocar = CoordenadasPlano(
-            janela.coordMax.x,
-            janela.coordMax.y
+            janela.regiaoDesenhoPlano.max.x,
+            janela.regiaoDesenhoPlano.max.y
         )
 
         while (coordCelulasX.first().coordenadaPlano > coord_min_alocar.x) adicionarColuna(Direcao.DECREMENTO)
@@ -108,8 +108,8 @@ class Camada(val janela: Janela, coordenadasIniciais: CoordenadasPlanoEDelta)
         )
     }
 
-    fun getCoordenadasPlanoEDelta(): CoordenadasPlanoEDelta {
-        return CoordenadasPlanoEDelta(getCoordenadasPlanoCelulaCantoSupEsq(),Delta)
+    fun getCoordenadasPlanoEDelta(): PosicaoCamera {
+        return PosicaoCamera(getCoordenadasPlanoCelulaCantoSupEsq(),Delta)
     }
 
     fun PosicionaCamadaNaTela() {

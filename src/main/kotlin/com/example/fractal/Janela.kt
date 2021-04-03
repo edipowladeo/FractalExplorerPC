@@ -29,14 +29,13 @@ class Janela(
 
     val texturaPlaceholder = gerenciadorDeImplementacoes.bufferTexture(100, 100, dummyTexture())
 
-    var coordMax = CoordenadasPlano(0.0, 0.0)
-    var coordMin = CoordenadasPlano(0.0, 0.0)
+    var regiaoDesenhoPlano = RetanguloPlano()
 
     /**VARIAVEIS DE ESTADO vars*/
     //TODO: injeção de dependencia não tá funcionando legal
 
     //var camadasDesejadas = 7..7 // passei para local no metodo adicionarRemoverCamadas
-    var PosicaoCameraAtual = PosicaoCameraInicial
+    var PosicaoCameraAtual = cameraInicial
     var PosicaoCameraDesejada = PosicaoCameraAtual
 
 
@@ -155,10 +154,10 @@ class Janela(
         dimensaoJanelaSaida.x*0.5*fator_debug,
         dimensaoJanelaSaida.y*0.5*fator_debug)
 
-        coordMax = getCoordenadasPlano(janela_desenho)
+        regiaoDesenhoPlano.max = getCoordenadasPlano(janela_desenho)
         janela_desenho.x=- janela_desenho.x
         janela_desenho.y=- janela_desenho.y
-        coordMin = getCoordenadasPlano(janela_desenho)
+        regiaoDesenhoPlano.min = getCoordenadasPlano(janela_desenho)
     //    println("coord max $coord_max coord min $coord_min")
     }
 
@@ -181,7 +180,7 @@ class Janela(
         camadasDesejadas.forEach {
             //TODO: usar metodo .in
             if (!camadas.containsKey(it)){
-                val coordenadas = CoordenadasPlanoEDelta(
+                val coordenadas = PosicaoCamera(
                     CoordenadasNovasCamadas,
                    getDeltaFromIntegerMagnification(it))
                    // 1.0/512.0 )

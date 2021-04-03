@@ -14,6 +14,11 @@ typealias  TipoCor = TRGB
 typealias  TipoArrayIteracoes = IntArray
 typealias  TipoSegundosI = Long
 
+fun CoordenadasTela.toCoordenadasPlano(camera: PosicaoCamera) = CoordenadasPlano(
+        camera.x + x * camera.Delta * 2,
+        camera.y + y * camera.Delta * 2
+    )
+
 class RetanguloPlano{
     var min = CoordenadasPlano()
     var max = CoordenadasPlano()
@@ -24,7 +29,7 @@ class RetanguloPlano{
     }
 }
 
-class CoordenadasPlanoEDelta : CoordenadasPlano {
+class PosicaoCamera : CoordenadasPlano {
     var Delta: TipoDelta = 0.0
     constructor():super(){}
     constructor(coordenadas: CoordenadasPlano, delta: TipoDelta):super(coordenadas){

@@ -30,7 +30,8 @@ JanelaPropriedades {
     var MagInicial = 11
 
     var MaginiciallF = pow(0.5,MagInicial.toDouble())/1.12
-    var PosicaoCameraInicial = CoordenadasPlanoEDelta(CoordenadasPlano(-0.5,0.0),MaginiciallF)
+    var cameraInicial = PosicaoCamera(CoordenadasPlano(-0.5,0.0),MaginiciallF)
+
         //var MagInicial = 15
     //var PosicaoCameraInicial = CoordenadasPlano(-1.78058,0.0)
 
