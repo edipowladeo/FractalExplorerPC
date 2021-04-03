@@ -15,25 +15,36 @@ typealias  TipoArrayIteracoes = IntArray
 typealias  TipoSegundosI = Long
 
 fun CoordenadasTela.toCoordenadasPlano(camera: PosicaoCamera) = CoordenadasPlano(
-        camera.x + x * camera.Delta * 2,
-        camera.y + y * camera.Delta * 2
-    )
+    camera.x + x * camera.Delta * 2,
+    camera.y + y * camera.Delta * 2
+)
 
-class RetanguloPlano{
+class RetanguloPlano {
     var min = CoordenadasPlano()
     var max = CoordenadasPlano()
-    constructor(){}
-    constructor(Min:CoordenadasPlano,Max:CoordenadasPlano){
-        min=Min
-        max=Max
+
+    constructor() {}
+    constructor(Min: CoordenadasPlano, Max: CoordenadasPlano) {
+        min = CoordenadasPlano(Min)
+        max = CoordenadasPlano(Max)
     }
+    constructor(C: RetanguloPlano) {
+        min = CoordenadasPlano(C.min)
+        max = CoordenadasPlano(C.max)
+    }
+    override fun toString() = "min = $min, max = $max"
+
 }
 
 class PosicaoCamera : CoordenadasPlano {
     var Delta: TipoDelta = 0.0
-    constructor():super(){}
-    constructor(coordenadas: CoordenadasPlano, delta: TipoDelta):super(coordenadas){
-        Delta=delta
+
+    constructor(C: PosicaoCamera) : super(C) {
+        Delta = C.Delta
+    }
+    constructor() : super() {}
+    constructor(coordenadas: CoordenadasPlano, delta: TipoDelta) : super(coordenadas) {
+        Delta = delta
     }
 }
 
@@ -87,37 +98,39 @@ private operator fun <T> T.plus(x: T): T {
 }
 */
 
-class Cvetor2i{
-    var x:Int = 0
-    var y:Int = 0
-    constructor(X:Int,Y:Int){
-        x=X
-        y=Y
+class Cvetor2i {
+    var x: Int = 0
+    var y: Int = 0
+
+    constructor(X: Int, Y: Int) {
+        x = X
+        y = Y
     }
-    constructor(){}
+
+    constructor() {}
 }
 
-open class Cvetor2d{
-    var x:Double = 0.0
-    var y:Double = 0.0
-    constructor(X:Double,Y:Double){
-        x=X
-        y=Y
+open class Cvetor2d {
+    var x: Double = 0.0
+    var y: Double = 0.0
+
+    constructor(X: Double, Y: Double) {
+        x = X
+        y = Y
     }
-    constructor(X:Int,Y:Int){
-        x=X.toDouble()
-        y=Y.toDouble()
+    constructor(X: Int, Y: Int) {
+        x = X.toDouble()
+        y = Y.toDouble()
     }
-    constructor(){}
-    constructor(C: Cvetor2d){
+    constructor() {}
+    constructor(C: Cvetor2d) {
         x = C.x
         y = C.y
     }
-    constructor(C: Cvetor2i){
+    constructor(C: Cvetor2i) {
         x = C.x.toDouble()
         y = C.y.toDouble()
     }
-
     override fun toString(): String {
         return " x: " + x.format(2).toString() + " y: " + y.format(2).toString()
     }
@@ -125,18 +138,20 @@ open class Cvetor2d{
 
 fun Double.format(digits: Int) = "%.${digits}f".format(this)
 
-class TRGB{
-    var r:Byte = 0
-    var g:Byte = 0
-    var b:Byte = 0
-    constructor(R:Byte,G:Byte,B:Byte){
-        r=R
-        g=G
-        b=B
+class TRGB {
+    var r: Byte = 0
+    var g: Byte = 0
+    var b: Byte = 0
+
+    constructor(R: Byte, G: Byte, B: Byte) {
+        r = R
+        g = G
+        b = B
     }
-    constructor(R:Float,G:Float,B:Float){
-        r=(R*255f).toByte()
-        g=(G*255f).toByte()
-        b=(B*255f).toByte()
+
+    constructor(R: Float, G: Float, B: Float) {
+        r = (R * 255f).toInt().toByte()
+        g = (G * 255f).toInt().toByte()
+        b = (B * 255f).toInt().toByte()
     }
 }

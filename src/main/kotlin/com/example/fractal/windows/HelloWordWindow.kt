@@ -75,6 +75,7 @@ class HelloWordWindow : DesenhistaDeCelulas() {
             dimensoesJanela = CoordenadasTela(x,y)
             OGL.glUniform2f(mWindowSizeUniformHandle, x.toFloat(), y.toFloat())
             janelaFractal.setDimensaoDaJanelaDeSaida(CoordenadasTela(x.toDouble(),y.toDouble()))
+            //Todo: testar se passar por referencia altera o objeto passado
             OGL.glViewport(0,0,x,y)
 
         }

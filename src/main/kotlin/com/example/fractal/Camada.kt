@@ -38,7 +38,7 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
         }
     }
     enum class Direcao {
-        INCREMENTO, DECREMENTO
+        PRIMEIRA, ULTIMA
     }
     /**lista de tarefas*/
     val TarefasProcessamento = GerenciadorDeTarefas<TarefaProcessamento>()
@@ -62,48 +62,37 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
     fun atualizaMatrizDeCelulas() {
         // presume-se que os valores minimos e maximos da janela estão atualizados
         //TODO:usar tipos e operator overload para melhorar a redabilidade
-        val larguraPlano = janela.tamSprite.x.toDouble() * Delta
-        val alturaPlano = janela.tamSprite.y.toDouble() * Delta
-
-        val retanguloAlocar = janela.regiaoDesenhoPlano
-        val retanguloDesalocar = janela.regiaoDesenhoPlano
-
-        val coord_min_alocar = CoordenadasPlano(
-            janela.regiaoDesenhoPlano.min.x,
-            janela.regiaoDesenhoPlano.min.y
-        )
-        val coord_max_alocar = CoordenadasPlano(
-            janela.regiaoDesenhoPlano.max.x - larguraPlano,
-            janela.regiaoDesenhoPlano.max.y - alturaPlano
-        )
-        val coord_min_desalocar = CoordenadasPlano(
-            janela.regiaoDesenhoPlano.min.x - larguraPlano,
-            janela.regiaoDesenhoPlano.min.y - alturaPlano
-        )
-        val coord_max_desalocar = CoordenadasPlano(
-            janela.regiaoDesenhoPlano.max.x,
-            janela.regiaoDesenhoPlano.max.y
+        val tamSpriteNoPlano = CoordenadasPlano(
+            janela.tamSprite.x.toDouble() * Delta,
+            janela.tamSprite.y.toDouble() * Delta
         )
 
-        //Aloca todas células
-        while (coordCelulasX.first().coordenadaPlano > coord_min_alocar.x) adicionarColuna(Direcao.DECREMENTO)
-        while (coordCelulasX.last() .coordenadaPlano < coord_max_alocar.x) adicionarColuna(Direcao.INCREMENTO)
-        while (coordCelulasY.first().coordenadaPlano > coord_min_alocar.y) adicionarLinha (Direcao.DECREMENTO)
-        while (coordCelulasY.last() .coordenadaPlano < coord_max_alocar.y) adicionarLinha (Direcao.INCREMENTO)
-
-        //Desaloca apenas uma
-        if (coordCelulasX.size > 1){
-            if (coordCelulasX.first().coordenadaPlano < coord_min_desalocar.x) removerColuna(Direcao.DECREMENTO)
+        val retanguloAlocar = RetanguloPlano(janela.regiaoDesenhoPlano).apply{
+            max.x -= tamSpriteNoPlano.x
+            max.y -= tamSpriteNoPlano.y
         }
+
+        val retanguloDesalocar = RetanguloPlano(janela.regiaoDesenhoPlano).apply{
+            min.x -= tamSpriteNoPlano.x
+            min.y -= tamSpriteNoPlano.y
+        }
+
+        //Aloca todas linhas/colunas por chamada
+        while (coordCelulasX.first().coordenadaPlano > retanguloAlocar.min.x) adicionarColuna(Direcao.ULTIMA)
+        while (coordCelulasX.last() .coordenadaPlano < retanguloAlocar.max.x) adicionarColuna(Direcao.PRIMEIRA)
+        while (coordCelulasY.first().coordenadaPlano > retanguloAlocar.min.y) adicionarLinha (Direcao.ULTIMA)
+        while (coordCelulasY.last() .coordenadaPlano < retanguloAlocar.max.y) adicionarLinha (Direcao.PRIMEIRA)
+
+        //Desaloca apenas uma linha/coluna por chamada
         if (coordCelulasX.size > 1){
-            if (coordCelulasX.last().coordenadaPlano > coord_max_desalocar.x)  removerColuna(Direcao.INCREMENTO)
+            if (coordCelulasX.first().coordenadaPlano < retanguloDesalocar.min.x) removerColuna(Direcao.ULTIMA)
+            if (coordCelulasX.last().coordenadaPlano > retanguloDesalocar.max.x)  removerColuna(Direcao.PRIMEIRA)
         }
         if (coordCelulasY.size > 1){
-            if (coordCelulasY.first().coordenadaPlano < coord_min_desalocar.y) removerLinha(Direcao.DECREMENTO)
+            if (coordCelulasY.first().coordenadaPlano < retanguloDesalocar.min.y) removerLinha(Direcao.ULTIMA)
+            if (coordCelulasY.last().coordenadaPlano > retanguloDesalocar.max.y)  removerLinha(Direcao.PRIMEIRA)
         }
-        if (coordCelulasY.size > 1){
-            if (coordCelulasY.last().coordenadaPlano > coord_max_desalocar.y)  removerLinha(Direcao.INCREMENTO)
-        }
+
     }
 
     fun getCoordenadasPlanoCelulaCantoSupEsq(): CoordenadasPlano {
@@ -168,9 +157,9 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
         val tamY = coordCelulasY.size
         val tamX = coordCelulasX.size
 
-        val indiceX = if (direcao== Direcao.INCREMENTO)  tamX else 0
+        val indiceX = if (direcao== Direcao.PRIMEIRA)  tamX else 0
 
-        val novacoordenadaOffset = if (direcao== Direcao.INCREMENTO) (tamX*Delta*janela.tamSprite.x) else (-Delta*janela.tamSprite.x)
+        val novacoordenadaOffset = if (direcao== Direcao.PRIMEIRA) (tamX*Delta*janela.tamSprite.x) else (-Delta*janela.tamSprite.x)
 
         /** incrementa o vetor de coordenadas */
         val novaCoordenadaX = CoordCelula1D(coordCelulasX.first().coordenadaPlano + novacoordenadaOffset)
@@ -197,9 +186,9 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
         val tamY = coordCelulasY.size
         val tamX = coordCelulasX.size
 
-        val indiceY = if (direcao== Direcao.INCREMENTO)  tamY else 0
+        val indiceY = if (direcao== Direcao.PRIMEIRA)  tamY else 0
 
-        val novacoordenadaOffset = if (direcao== Direcao.INCREMENTO) (tamY*Delta*janela.tamSprite.y) else (-Delta*janela.tamSprite.y)
+        val novacoordenadaOffset = if (direcao== Direcao.PRIMEIRA) (tamY*Delta*janela.tamSprite.y) else (-Delta*janela.tamSprite.y)
 
         /** incrementa o vetor de coordenadas */
         val novaCoordenadaY = CoordCelula1D(coordCelulasY.first().coordenadaPlano + novacoordenadaOffset)
@@ -224,7 +213,7 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
         val tamY = coordCelulasY.size
         val tamX = coordCelulasX.size
 
-        val indiceX = if (direcao== Direcao.INCREMENTO)  tamX-1 else 0
+        val indiceX = if (direcao== Direcao.PRIMEIRA)  tamX-1 else 0
 
         /** remove Coordenadas do vetor*/
         coordCelulasX.removeAt(indiceX)
@@ -242,7 +231,7 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
         val tamY = coordCelulasY.size
         val tamX = coordCelulasX.size
 
-        val indiceY = if (direcao == Direcao.INCREMENTO) tamY - 1 else 0
+        val indiceY = if (direcao == Direcao.PRIMEIRA) tamY - 1 else 0
 
         /** remove Coordenadas do vetor*/
         coordCelulasY.removeAt(indiceY)
