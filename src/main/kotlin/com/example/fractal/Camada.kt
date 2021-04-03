@@ -62,8 +62,11 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
     fun atualizaMatrizDeCelulas() {
         // presume-se que os valores minimos e maximos da janela estão atualizados
         //TODO:usar tipos e operator overload para melhorar a redabilidade
-        var larguraPlano = janela.tamSprite.x.toDouble() * Delta
-        var alturaPlano = janela.tamSprite.y.toDouble() * Delta
+        val larguraPlano = janela.tamSprite.x.toDouble() * Delta
+        val alturaPlano = janela.tamSprite.y.toDouble() * Delta
+
+        val retanguloAlocar = janela.regiaoDesenhoPlano
+        val retanguloDesalocar = janela.regiaoDesenhoPlano
 
         val coord_min_alocar = CoordenadasPlano(
             janela.regiaoDesenhoPlano.min.x,
