@@ -35,8 +35,8 @@ class Janela(
     //TODO: injeção de dependencia não tá funcionando legal
 
     //var camadasDesejadas = 7..7 // passei para local no metodo adicionarRemoverCamadas
-    var PosicaoCameraAtual = cameraInicial
-    var PosicaoCameraDesejada = PosicaoCameraAtual
+    var cameraAtual = cameraInicial
+    var cameraDesejada = cameraAtual
 
 
     val poolArrayIteracoes = ObjectPool<TipoArrayIteracoes>(
@@ -70,15 +70,15 @@ class Janela(
     }
 
     fun moverCamera(dXpixels: Float, dYpixels: Float) {
-        PosicaoCameraAtual.x += dXpixels * PosicaoCameraAtual.Delta * FatorScroll
-        PosicaoCameraAtual.y += dYpixels * PosicaoCameraAtual.Delta * FatorScroll
-        PosicaoCameraDesejada = PosicaoCameraAtual;
+        cameraAtual.x += dXpixels * cameraAtual.Delta * FatorScroll
+        cameraAtual.y += dYpixels * cameraAtual.Delta * FatorScroll
+        cameraDesejada = cameraAtual;
 
     }
 
     fun dividirDeltaPor(fator: Float) {
-        PosicaoCameraAtual.Delta /= fator.pow(fatorEscala)
-        PosicaoCameraDesejada = PosicaoCameraAtual
+        cameraAtual.Delta /= fator.pow(fatorEscala)
+        cameraDesejada = cameraAtual
     }
 
     fun setDimensaoDaJanelaDeSaida(dimensao: CoordenadasTela) {
@@ -91,13 +91,6 @@ class Janela(
 
     fun getDimensaoDaJanelaDeSaida(): CoordenadasTela {
         return dimensaoJanelaSaida
-    }
-
-    fun getCoordenadasPlano(coordenadasTela: CoordenadasTela): CoordenadasPlano {
-        return CoordenadasPlano(
-            PosicaoCameraAtual.x + coordenadasTela.x * PosicaoCameraAtual.Delta * 2,
-            PosicaoCameraAtual.y + coordenadasTela.y * PosicaoCameraAtual.Delta * 2
-        )
     }
 
     fun atualizaCameraECamadas() {
@@ -123,7 +116,7 @@ class Janela(
         paleta.bind()
         camadas.values.forEach { camada ->
             camada.posicionaTodasCelulasNaTela()
-            val escala =camada.Delta * tamSprite.x / PosicaoCameraAtual.Delta
+            val escala =camada.Delta * tamSprite.x / cameraAtual.Delta
             camada.Celulas.forEachIndexed { i, colunas ->
                 colunas.forEachIndexed() { j, linhas ->
                     linhas.run {
@@ -154,15 +147,15 @@ class Janela(
         dimensaoJanelaSaida.x*0.5*fator_debug,
         dimensaoJanelaSaida.y*0.5*fator_debug)
 
-        regiaoDesenhoPlano.max = getCoordenadasPlano(janela_desenho)
+        regiaoDesenhoPlano.max = janela_desenho.toCoordenadasPlano(cameraAtual)
         janela_desenho.x=- janela_desenho.x
         janela_desenho.y=- janela_desenho.y
-        regiaoDesenhoPlano.min = getCoordenadasPlano(janela_desenho)
+        regiaoDesenhoPlano.min = janela_desenho.toCoordenadasPlano(cameraAtual)
     //    println("coord max $coord_max coord min $coord_min")
     }
 
       private fun adicionarRemoverCamadas() {
-        val maiorvalor = log((1.0/(PosicaoCameraAtual.Delta*minTamanhoAparentePixel)),2.0).toInt()
+        val maiorvalor = log((1.0/(cameraAtual.Delta*minTamanhoAparentePixel)),2.0).toInt()
         val menorvalor = maiorvalor - quantidadeDeCamadasAlemDaPrincipal
 
         val camadasDesejadas = IntRange(
@@ -215,7 +208,7 @@ class Janela(
         stringB.append("\nFila Desalocar Textura " + tarefasDesalocarTextura.getQtdeTarefas() )
         //  textoDebug.append("\nmin:" +coord_min)
         //  textoDebug.append("\nmax:" +coord_max)
-        stringB.append("\nCoord Camera Atual " + PosicaoCameraAtual)
+        stringB.append("\nCoord Camera Atual " + cameraAtual)
         camadas.forEach{camada ->
             stringB.append("\n\t" +camada.key+": Fila Processos "+camada.value.TarefasProcessamento.getQtdeTarefas())}
         lock.unlock()

@@ -1,9 +1,6 @@
 package com.example.fractal.windows
 
-import com.example.fractal.CoordenadasTela
-import com.example.fractal.Janela
-import com.example.fractal.UniformHandle
-import com.example.fractal.WindowHandle
+import com.example.fractal.*
 import org.lwjgl.Version
 import org.lwjgl.glfw.Callbacks
 import org.lwjgl.glfw.GLFW
@@ -183,9 +180,9 @@ class HelloWordWindow : DesenhistaDeCelulas() {
         coordenadasTela.x -= dimensoesJanela.x / 2
         coordenadasTela.y -= dimensoesJanela.y / 2
         janelaFractal.let {
-            textoDebug.append("\nTouch " + coordenadasTela.toString())
-            textoDebug.append("\nPlano " + it.getCoordenadasPlano(coordenadasTela))
-            textoDebug.append("\n" + it.toString())
+            textoDebug.append("\nTouch $coordenadasTela")
+            textoDebug.append("\nPlano ${coordenadasTela.toCoordenadasPlano(it.cameraAtual)}")
+            textoDebug.append("\n $it")
         }
     }
 

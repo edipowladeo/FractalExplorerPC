@@ -116,13 +116,13 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
         lateinit var coordenadasTela : CoordenadasTela
 
         val coordenadasPlano = getCoordenadasPlanoCelulaCantoSupEsq()
-        janela.PosicaoCameraAtual.also {
+        janela.cameraAtual.also {
             coordenadasTela = CoordenadasTela(
                 (coordenadasPlano.x - it.x) / it.Delta,
                 (coordenadasPlano.y - it.y) / it.Delta)
         }
 
-        val razao = Delta / janela.PosicaoCameraAtual.Delta
+        val razao = Delta / janela.cameraAtual.Delta
         coordCelulasX.forEachIndexed{i,it->
             it.coordenadaTela=coordenadasTela.x + i*razao * janela.tamSprite.x}
         coordCelulasY.forEachIndexed{j,it->
