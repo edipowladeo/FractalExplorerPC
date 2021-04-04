@@ -27,10 +27,10 @@ JanelaPropriedades {
 
     var TaxaZoom = 0.0f
     var TaxaPan = 0.0f
-    var MagInicial = 11
+    var MagInicial = 9
 
     var MaginiciallF = pow(0.5,MagInicial.toDouble())/1.12
-    var cameraInicial = PosicaoCamera(CoordenadasPlano(-0.5,0.0),MaginiciallF)
+    var cameraInicial = PosicaoCamera(CoordenadasPlano(-0.75,0.0),MaginiciallF)
 
         //var MagInicial = 15
     //var PosicaoCameraInicial = CoordenadasPlano(-1.78058,0.0)

@@ -75,12 +75,19 @@ class Janela(
         cameraAtual.x += dXpixels * cameraAtual.delta * FatorScroll
         cameraAtual.y += dYpixels * cameraAtual.delta * FatorScroll
         cameraDesejada = PosicaoCamera(cameraAtual)
+        verificarLimites()
     }
 
     fun moverCameraDesejada(dXpixels: Float, dYpixels: Float) {
         val fatorScroll = 0.4
         cameraDesejada.x += dXpixels * cameraAtual.delta * dimensaoJanelaSaida.x * fatorScroll
         cameraDesejada.y += dYpixels * cameraAtual.delta * dimensaoJanelaSaida.y * fatorScroll
+        verificarLimites()
+    }
+
+    fun irPara(posicaoCamera: PosicaoCamera) {
+        cameraDesejada = PosicaoCamera(posicaoCamera)
+        verificarLimites()
     }
 
     fun dividirDeltaPor(fator: Float) {
@@ -98,13 +105,15 @@ class Janela(
     //todo limitar
     fun verificarLimites(){
         val deltaMax = 3 / dimensaoJanelaSaida.x
-        if (cameraDesejada.delta > deltaMax) {
-            cameraDesejada.delta = deltaMax
-        }
         val deltaMin = 10.0.pow(-14) / dimensaoJanelaSaida.x
-        if (cameraDesejada.delta < deltaMin) {
-            cameraDesejada.delta = deltaMin
-        }
+
+        if (cameraDesejada.delta > deltaMax) { cameraDesejada.delta = deltaMax }
+        if (cameraDesejada.delta < deltaMin) { cameraDesejada.delta = deltaMin }
+        if (cameraDesejada.x > +2.0) { cameraDesejada.x = +2.0 }
+        if (cameraDesejada.x < -2.0) { cameraDesejada.x = -2.0 }
+        if (cameraDesejada.y > +2.0) { cameraDesejada.y = +2.0 }
+        if (cameraDesejada.y < -2.0) { cameraDesejada.y = -2.0 }
+
     }
 
     //todo fator em funcao do tempo
@@ -116,17 +125,12 @@ class Janela(
 
         cameraAtual.x = cameraAtual.x + (cameraDesejada.x - cameraAtual.x) * 0.1
         cameraAtual.y = cameraAtual.y + (cameraDesejada.y - cameraAtual.y) * 0.1
-        //  println("logdelta $logDeltaD")
-            println("delta ${cameraAtual.delta * dimensaoJanelaSaida.x} ")
+   //         println("delta ${cameraAtual.delta * dimensaoJanelaSaida.x} ")
     }
 
     fun setDimensaoDaJanelaDeSaida(dimensao: CoordenadasTela) {
-        //      var dimensaoold = dimensaoJanelaSaida
-
         dimensaoJanelaSaida = CoordenadasTela(dimensao)
         verificarLimites()
-
-        // println("Janela Redimensioanda $dimensaoJanelaSaida")
     }
 
     fun getDimensaoDaJanelaDeSaida(): CoordenadasTela {
@@ -157,7 +161,8 @@ class Janela(
         paleta.bind()
         camadas.values.forEach { camada ->
             camada.posicionaTodasCelulasNaTela()
-            val escala = camada.delta * tamSprite.x / cameraAtual.delta
+            //todo gambiara para nao exibir listras aumentei 2% o tamanho do retangulo
+            val escala = camada.delta * tamSprite.x *1.02/ cameraAtual.delta
             camada.celulas.forEachIndexed { i, colunas ->
                 colunas.forEachIndexed() { j, linhas ->
                     linhas.run {
@@ -281,6 +286,7 @@ class Janela(
             GLFW.GLFW_KEY_RIGHT ->  moverCameraDesejada(+1f,0f)
             GLFW.GLFW_KEY_UP ->     moverCameraDesejada(0f,-1f)
             GLFW.GLFW_KEY_DOWN ->   moverCameraDesejada(0f,+1f)
+            GLFW.GLFW_KEY_H ->      irPara(cameraInicial)
         }
     }
 }

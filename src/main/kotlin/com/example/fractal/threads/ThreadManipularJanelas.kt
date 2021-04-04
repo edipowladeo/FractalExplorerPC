@@ -12,7 +12,7 @@ class ThreadManipularJanelas(val janela: Janela):Thread() {
 
             }
         } catch (e: Throwable) {
-          //  println("exception $e")
+            println("exception $e")
             e.printStackTrace()
         }
     }

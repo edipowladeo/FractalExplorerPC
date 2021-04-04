@@ -15,7 +15,9 @@ class ThreadProcessamento(val janela: Janela):Thread() {
                     sleep(15)
                 }
             }
-        } catch (e: InterruptedException) {
+       // } catch (e: InterruptedException) {
+        } catch (e: Throwable) {
+            println("exception $e")
             e.printStackTrace()
         }
     }
