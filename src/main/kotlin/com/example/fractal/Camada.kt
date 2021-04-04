@@ -47,7 +47,7 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
     private var coordCelulasX = MutableList<CoordCelula1D>(1){ CoordCelula1D(coordenadasIniciais.x) }
     private var coordCelulasY = MutableList<CoordCelula1D>(1){ CoordCelula1D(coordenadasIniciais.y) }
 
-    internal val delta: TipoDelta = coordenadasIniciais.Delta
+    internal val delta: TipoDelta = coordenadasIniciais.delta
 
     /**Lista (colunas) de lista (linhas) de células*/
     internal var celulas = MutableList<MutableList<Celula>>(1){
@@ -113,11 +113,11 @@ class Camada(val janela: Janela, coordenadasIniciais: PosicaoCamera)
         val coordenadasPlano = getCoordenadasPlanoCelulaCantoSupEsq()
         janela.cameraAtual.also {
             coordenadasTela = CoordenadasTela(
-                (coordenadasPlano.x - it.x) / it.Delta,
-                (coordenadasPlano.y - it.y) / it.Delta)
+                (coordenadasPlano.x - it.x) / it.delta,
+                (coordenadasPlano.y - it.y) / it.delta)
         }
 
-        val razao = delta / janela.cameraAtual.Delta
+        val razao = delta / janela.cameraAtual.delta
         coordCelulasX.forEachIndexed{i,it->
             it.coordenadaTela=coordenadasTela.x + i*razao * janela.tamSprite.x}
         coordCelulasY.forEachIndexed{j,it->

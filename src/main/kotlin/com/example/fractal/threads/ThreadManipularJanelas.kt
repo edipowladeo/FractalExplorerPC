@@ -6,7 +6,7 @@ class ThreadManipularJanelas(val janela: Janela):Thread() {
     override fun run() {
         try {
             while (true) {
-                janela.atualizaCameraECamadas() //DoStuff
+                janela.atualizaCamadasECelulas() //DoStuff
                 //     Log.i("thread manipular janelas", "running")
              //   println("thread running $counter")
 

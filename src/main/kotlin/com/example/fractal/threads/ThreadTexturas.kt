@@ -1,4 +1,4 @@
-package com.example.fractal.android
+package com.example.fractal.threads
 
 
 import com.example.fractal.Janela

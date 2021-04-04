@@ -52,8 +52,8 @@ class ObjectPool<T>(val createObject:()->T) {
                     }
                 }
 
-//todo: create interface or class for logs vc prinln
-            //    Log.i("ObjectPool","${size} -> ${pool.size}")
+                //todo: create interface or class for logs vc prinln
+                //    Log.i("ObjectPool","${size} -> ${pool.size}")
                 println("ObjectPool: ${size} -> ${pool.size}")
             }, validationInterval, validationInterval, TimeUnit.SECONDS)
         }
@@ -84,7 +84,7 @@ class ObjectPool<T>(val createObject:()->T) {
                 }
 
 
-    //            Log.i("ObjectPool","${size} -> ${pool.size}")
+                //            Log.i("ObjectPool","${size} -> ${pool.size}")
                 println("ObjectPool: ${size} -> ${pool.size}")
             }, validationInterval, validationInterval, TimeUnit.SECONDS)
         }

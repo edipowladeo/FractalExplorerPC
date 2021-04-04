@@ -25,7 +25,7 @@ class Paleta(val janela: Janela) {
     fun bind(){
         texturaPaleta.bind()
     }
-
+ //todo usar tipos de cor
     fun cor(iteracoes:Int):Int{
 
     //    if (iteracoes == 0) return 0

@@ -67,6 +67,10 @@ class HelloWordWindow : DesenhistaDeCelulas() {
                     window,
                     true
             ) // We will detect this in the rendering loop
+            if (action in listOf(GLFW.GLFW_PRESS, GLFW.GLFW_REPEAT)){
+            janelaFractal.handleKeyPress(key)
+            }
+        //    println("Scancode $scancode key $key action $action mods $mods")
         }
 
         GLFW.glfwSetWindowSizeCallback(windowHandle){

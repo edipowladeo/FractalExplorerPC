@@ -4,10 +4,12 @@ import com.example.fractal.interfaces.DesenhistaDeCelulas
 import com.example.fractal.interfaces.GerenciadorDeImplementacoes
 import com.example.fractal.threads.ThreadManipularJanelas
 import com.example.fractal.threads.ThreadProcessamento
+import org.lwjgl.glfw.GLFW
+import java.awt.event.KeyEvent
 import java.util.*
 import java.util.concurrent.locks.ReentrantLock
+import kotlin.math.*
 import kotlin.math.log
-import kotlin.math.pow
 
 //TODO: thread Safe
 /** Lock janela thread
@@ -38,7 +40,7 @@ class Janela(
     var regiaoDesenhoPlano = RetanguloPlano()
 
     val poolArrayIteracoes = ObjectPool<TipoArrayIteracoes>(
-        10, 200, 1L,
+        1000, 10000, 1L,
         fun(): TipoArrayIteracoes { return TipoArrayIteracoes(tamSprite.x * tamSprite.y) { 0 } })
 
     /*   val poolTextureWrapper = ObjectPool<TextureWrapper>(
@@ -49,7 +51,7 @@ class Janela(
     val tarefasDesalocarTextura = GerenciadorDeTarefas<TarefaDesalocarTexturaGL>()
     val tarefasAlocarTextura = GerenciadorDeTarefas<TarefaCriarTexturaGL>()
 
-    //todo : interface
+
     private val numThreadsProcessamento: Int = Runtime.getRuntime().availableProcessors() - 1;
     private val threadsProcessamento = List(numThreadsProcessamento) { ThreadProcessamento(this) }
     private val threadManipularJanelas = ThreadManipularJanelas(this)
@@ -62,7 +64,7 @@ class Janela(
     init {
         paleta = Paleta(this)
         tarefasAlocarTextura.add(TarefaCriarTexturaGL(texturaPlaceholder))
-        atualizaCameraECamadas()
+        atualizaCamadasECelulas()
 
         threadManipularJanelas.start()
         threadsProcessamento.forEach { it.start() }
@@ -70,21 +72,59 @@ class Janela(
     }
 
     fun moverCamera(dXpixels: Float, dYpixels: Float) {
-        cameraAtual.x += dXpixels * cameraAtual.Delta * FatorScroll
-        cameraAtual.y += dYpixels * cameraAtual.Delta * FatorScroll
+        cameraAtual.x += dXpixels * cameraAtual.delta * FatorScroll
+        cameraAtual.y += dYpixels * cameraAtual.delta * FatorScroll
         cameraDesejada = PosicaoCamera(cameraAtual)
+    }
 
+    fun moverCameraDesejada(dXpixels: Float, dYpixels: Float) {
+        val fatorScroll = 0.4
+        cameraDesejada.x += dXpixels * cameraAtual.delta * dimensaoJanelaSaida.x * fatorScroll
+        cameraDesejada.y += dYpixels * cameraAtual.delta * dimensaoJanelaSaida.y * fatorScroll
     }
 
     fun dividirDeltaPor(fator: Float) {
-        cameraAtual.Delta /= fator.pow(fatorEscala)
+        println("DELTA ")
+        cameraAtual.delta /= fator.pow(fatorEscala)
         cameraDesejada = PosicaoCamera(cameraAtual)
+        verificarLimites()
+    }
+
+    fun dividirDeltaDesejado(fator: Float) {
+        cameraDesejada.delta /= fator.pow(fatorEscala)
+        verificarLimites()
+
+    }
+    //todo limitar
+    fun verificarLimites(){
+        val deltaMax = 3 / dimensaoJanelaSaida.x
+        if (cameraDesejada.delta > deltaMax) {
+            cameraDesejada.delta = deltaMax
+        }
+        val deltaMin = 10.0.pow(-14) / dimensaoJanelaSaida.x
+        if (cameraDesejada.delta < deltaMin) {
+            cameraDesejada.delta = deltaMin
+        }
+    }
+
+    //todo fator em funcao do tempo
+    private fun atualizaCamera() {
+        val logDeltaD = ln(cameraDesejada.delta)
+        val logDelta = ln(cameraAtual.delta)
+
+        cameraAtual.delta = exp(logDelta + (logDeltaD - logDelta) * 0.1)
+
+        cameraAtual.x = cameraAtual.x + (cameraDesejada.x - cameraAtual.x) * 0.1
+        cameraAtual.y = cameraAtual.y + (cameraDesejada.y - cameraAtual.y) * 0.1
+        //  println("logdelta $logDeltaD")
+            println("delta ${cameraAtual.delta * dimensaoJanelaSaida.x} ")
     }
 
     fun setDimensaoDaJanelaDeSaida(dimensao: CoordenadasTela) {
         //      var dimensaoold = dimensaoJanelaSaida
-        dimensaoJanelaSaida = CoordenadasTela(dimensao)
 
+        dimensaoJanelaSaida = CoordenadasTela(dimensao)
+        verificarLimites()
 
         // println("Janela Redimensioanda $dimensaoJanelaSaida")
     }
@@ -93,7 +133,7 @@ class Janela(
         return CoordenadasTela(dimensaoJanelaSaida)
     }
 
-    fun atualizaCameraECamadas() {
+    fun atualizaCamadasECelulas() {
         lock.lock()
         adicionarRemoverCamadas()
         atualizaIntervaloDesenho()
@@ -109,6 +149,7 @@ class Janela(
     fun desenharCelulas(desenhista: DesenhistaDeCelulas) {
         lock.lock()
         //atualizaCameraECamadas()
+        atualizaCamera();
         //todo :definir um ciclo temporal consistente
         val time = relogio.getCurrentTimeMs() % 10240L
         // val angleInRad = 6.28318530f / 10000.0f * time.toFloat() * velocidadeCircularCores
@@ -116,7 +157,7 @@ class Janela(
         paleta.bind()
         camadas.values.forEach { camada ->
             camada.posicionaTodasCelulasNaTela()
-            val escala = camada.delta * tamSprite.x / cameraAtual.Delta
+            val escala = camada.delta * tamSprite.x / cameraAtual.delta
             camada.celulas.forEachIndexed { i, colunas ->
                 colunas.forEachIndexed() { j, linhas ->
                     linhas.run {
@@ -159,7 +200,7 @@ class Janela(
     }
 
     private fun adicionarRemoverCamadas() {
-        val maiorvalor = log((1.0 / (cameraAtual.Delta * minTamanhoAparentePixel)), 2.0).toInt()
+        val maiorvalor = log((1.0 / (cameraAtual.delta * minTamanhoAparentePixel)), 2.0).toInt()
         val menorvalor = maiorvalor - quantidadeDeCamadasAlemDaPrincipal
 
         val camadasDesejadas = IntRange(
@@ -225,5 +266,21 @@ class Janela(
 
     fun liberarRecursos() {
         // TODO("Not yet implemented")
+    }
+
+    //todo interface para retornar teclas
+    fun handleKeyPress(key: Int) {
+        when (key) {
+            GLFW.GLFW_KEY_SPACE ->  dividirDeltaDesejado(2f)
+            GLFW.GLFW_KEY_Z ->      dividirDeltaDesejado(1 / 2f)
+            GLFW.GLFW_KEY_A ->      moverCameraDesejada(-1f,0f)
+            GLFW.GLFW_KEY_D ->      moverCameraDesejada(+1f,0f)
+            GLFW.GLFW_KEY_W ->      moverCameraDesejada(0f,-1f)
+            GLFW.GLFW_KEY_S ->      moverCameraDesejada(0f,+1f)
+            GLFW.GLFW_KEY_LEFT ->   moverCameraDesejada(-1f,0f)
+            GLFW.GLFW_KEY_RIGHT ->  moverCameraDesejada(+1f,0f)
+            GLFW.GLFW_KEY_UP ->     moverCameraDesejada(0f,-1f)
+            GLFW.GLFW_KEY_DOWN ->   moverCameraDesejada(0f,+1f)
+        }
     }
 }

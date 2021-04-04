@@ -15,8 +15,8 @@ typealias  TipoArrayIteracoes = IntArray
 typealias  TipoSegundosI = Long
 
 fun CoordenadasTela.toCoordenadasPlano(camera: PosicaoCamera) = CoordenadasPlano(
-    camera.x + x * camera.Delta * 2,
-    camera.y + y * camera.Delta * 2
+    camera.x + x * camera.delta * 2,
+    camera.y + y * camera.delta * 2
 )
 
 class RetanguloPlano {
@@ -37,14 +37,14 @@ class RetanguloPlano {
 }
 
 class PosicaoCamera : CoordenadasPlano {
-    var Delta: TipoDelta = 0.0
+    var delta: TipoDelta = 0.0
 
     constructor(C: PosicaoCamera) : super(C) {
-        Delta = C.Delta
+        delta = C.delta
     }
     constructor() : super() {}
     constructor(coordenadas: CoordenadasPlano, delta: TipoDelta) : super(coordenadas) {
-        Delta = delta
+        this.delta = delta
     }
 }
 

@@ -27,7 +27,7 @@ vec4 paleta(uint iteracoes,float deltaT){
 
     if (iteracoes == 0u) return vec4(0.0,0.0,0.0,1.0); //Cor do set de mandelbrot
 
-    int pidex = int(iteracoes/2u)%tamPaleta;
+    int pidex = int(iteracoes/10u)%tamPaleta;
     pidex = int(float(pidex) + deltaT*velocidadeCircular)%tamPaleta;
     vec4 cor = texelFetch(u_Paleta,pidex);
     return cor;

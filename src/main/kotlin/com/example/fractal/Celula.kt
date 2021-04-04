@@ -102,6 +102,8 @@ class Celula(val camada: Camada, val coordenadasPlano: CoordenadasPlano, val tam
         }
         val logZn = ln(zx2 + zy2) / 2.0
         val samplingIteracoes = camada.janela.samplingIteracoes.toDouble()
+        i+=10 //todo esta é uma gambiarra que corrige o problema no anel sem cor em volta do fractal
+        //creio que se deve ao fato da paleta pintar de preto quando as iteracoes sao zero
         val parcial =        samplingIteracoes * ln(logZn / 0.69314718056) / 0.69314718056; //parcela que falta para chegar no proximo i
         // if (parcial >SAMPLING_ITERACOES) parcial=SAMPLING_ITERACOES.toDouble();
         return (i * samplingIteracoes - parcial).toLong();
